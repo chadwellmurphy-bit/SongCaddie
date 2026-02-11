@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Song Caddie</title>
   
   <!-- Apple Touch Icon for iOS home screen -->
-  <link rel="apple-touch-icon" href="logo-text-small.png">
+  <link rel="apple-touch-icon" href="icon_180x180.png">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   
   <!-- Mobile Web App Settings -->
   <meta name="apple-mobile-web-app-title" content="Song Caddie">
@@ -15,6 +16,22 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Lock screen dimensions */
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: fixed;
+      touch-action: pan-y pan-x;
+    }
+    
+    /* Allow pinch zoom only on lyrics */
+    #lyricsContainer {
+      touch-action: pinch-zoom;
+      margin-top: 20px;
+      padding-bottom: 100px;
+    }
+    
     .chord-pro pre { white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; font-size: 1.125rem; line-height: 1.6; }
     .chord-pro .chord { color: #4f46e5; font-weight: bold; }
     .draggable { cursor: move; user-select: none; }
@@ -87,10 +104,6 @@
       pointer-events: none;
       z-index: 20;
     }
-    #lyricsContainer {
-      margin-top: 20px; /* reduced top margin → lyrics higher */
-      padding-bottom: 100px; /* space for bottom controls */
-    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen antialiased">
@@ -103,19 +116,35 @@
   <!-- Main -->
   <div id="main" class="hidden relative min-h-screen">
 
-    <!-- Hamburger menu – hidden when panel open -->
-    <button id="menuBtn" class="fixed top-4 right-4 z-30 text-gray-800 hover:text-indigo-600 transition hidden">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
+    <!-- Menu button with "My library" icon -->
+    <button id="menuBtn" class="fixed top-4 right-4 z-30 hover:opacity-80 transition hidden">
+      <svg width="80" height="80" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <!-- Icon symbol -->
+        <g fill="#1f2937">
+          <!-- Left vertical bar -->
+          <rect x="360" y="300" width="90" height="320" rx="45"/>
+          <!-- Middle vertical bar -->
+          <rect x="480" y="240" width="90" height="380" rx="45"/>
+          <!-- Right angled bar -->
+          <rect x="610" y="340" width="90" height="280" rx="45"
+                transform="rotate(-25 655 480)"/>
+        </g>
+        <!-- Text -->
+        <text x="512" y="820"
+              text-anchor="middle"
+              font-family="Arial, Helvetica, sans-serif"
+              font-size="120"
+              fill="#1f2937"
+              letter-spacing="2">
+          My library
+        </text>
       </svg>
     </button>
 
     <main class="p-6 pt-16 max-w-3xl mx-auto relative"> <!-- reduced pt-20 → pt-16 so content starts higher -->
-      <div id="noSong" class="text-center py-20 text-gray-500">
-        <p class="text-xl mb-8">Select a song from the menu →</p>
-        <img src="logo-splash.png" alt="Song Caddie Logo" class="mx-auto w-48 md:w-64 opacity-80"/>
+      <div id="noSong" class="text-center py-20 text-gray-500 relative">
+        <p class="text-xl mb-8">Select a song from <span class="text-indigo-600 hover:text-indigo-700 cursor-pointer underline" onclick="openPanel()">My library</span></p>
+        <img src="logo-splash.png" alt="Song Caddie Logo" class="mx-auto w-48 md:w-64 opacity-20"/>
       </div>
 
       <!-- Song view -->
@@ -1131,6 +1160,55 @@
         ];
         saveData();
       }
+
+      // Handle orientation changes - lock screen dimensions
+      window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          document.body.style.height = window.innerHeight + 'px';
+        }, 100);
+      });
+
+      // Lock initial height
+      document.body.style.height = window.innerHeight + 'px';
+
+      // Enable pinch-to-zoom on lyrics only
+      let lyricsScale = 1;
+      let lastDistance = 0;
+      
+      const lyricsContainer = document.getElementById('lyricsContainer');
+      const lyricsElement = document.getElementById('songLyrics');
+      
+      lyricsContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+          lastDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+        }
+      });
+      
+      lyricsContainer.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const distance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+          
+          if (lastDistance > 0) {
+            const delta = distance - lastDistance;
+            lyricsScale = Math.max(0.5, Math.min(3, lyricsScale + delta * 0.01));
+            lyricsElement.style.fontSize = (lyricsScale * 1.125) + 'rem';
+          }
+          
+          lastDistance = distance;
+        }
+      });
+      
+      lyricsContainer.addEventListener('touchend', () => {
+        lastDistance = 0;
+      });
 
       renderPanelContent();
     </script>
