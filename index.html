@@ -1,2848 +1,942 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)file:///Users/chadmurphy/Downloads/melodex_2.html -->
-<html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Melodex">
-    <title>Melodex - Your Songbook</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --surface-light: #334155;
-            --text: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border: #475569;
-            --success: #10b981;
-            --warning: #f59e0b;
-        }
-
-        [data-theme="light"] {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --surface-light: #f1f5f9;
-            --text: #0f172a;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --warning: #f59e0b;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Header */
-        .header {
-            background: var(--surface);
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            white-space: nowrap;
-        }
-
-        .nav-tabs-inline {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        /* Navigation Tabs */
-        .nav-tabs {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 61px;
-            z-index: 99;
-            display: flex;
-            overflow-x: auto;
-        }
-
-        .nav-tab {
-            padding: 0.5rem 1rem;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            white-space: nowrap;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .nav-tab:hover {
-            background: var(--surface-light);
-            color: var(--text);
-        }
-
-        .nav-tab.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Buttons */
-        button {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:active {
-            background: var(--primary-dark);
-        }
-
-        .btn-secondary {
-            background: var(--surface-light);
-            color: var(--text);
-        }
-
-        .btn-secondary:active {
-            background: var(--border);
-        }
-
-        .btn-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .btn-hamburger {
-            background: none;
-            border: none;
-            padding: 0.5rem;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text);
-            opacity: 0.7;
-            transition: opacity 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.1rem;
-        }
-
-        .btn-hamburger:hover {
-            opacity: 1;
-        }
-
-        .btn-hamburger:active {
-            opacity: 0.5;
-        }
-
-        #hamburgerBtn {
-            line-height: 0.8;
-        }
-
-        .btn-control-icon {
-            background: none;
-            border: none;
-            padding: 0.35rem;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: var(--text);
-            opacity: 0.8;
-            transition: opacity 0.2s, transform 0.1s;
-            min-width: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-control-icon:hover {
-            opacity: 1;
-        }
-
-        .btn-control-icon:active {
-            opacity: 0.5;
-            transform: scale(0.95);
-        }
-
-        .key-display {
-            color: var(--text);
-            font-size: 0.95rem;
-            padding: 0.5rem 0.75rem;
-            opacity: 0.8;
-        }
-
-        /* Side Panel */
-        .side-panel {
-            position: fixed;
-            top: 0;
-            right: -35%;
-            width: 35%;
-            height: 100%;
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            z-index: 150;
-            transition: right 0.3s ease;
-            overflow-y: auto;
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .side-panel.active {
-            right: 0;
-        }
-
-        .side-panel-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: var(--surface);
-            z-index: 10;
-        }
-
-        .side-panel-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .side-panel-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-            background: var(--bg);
-        }
-
-        .side-panel-tab {
-            flex: 1;
-            padding: 0.75rem 0.5rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .side-panel-tab:hover {
-            color: var(--text);
-            background: var(--surface-light);
-        }
-
-        .side-panel-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .side-panel-content {
-            padding: 0.5rem;
-        }
-
-        .side-panel-item {
-            padding: 0.75rem;
-            cursor: pointer;
-            border-radius: 0.5rem;
-            margin-bottom: 0.25rem;
-            transition: background 0.2s;
-        }
-
-        .side-panel-item:hover {
-            background: var(--surface-light);
-        }
-
-        .side-panel-item.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .side-panel-item-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .side-panel-item-artist {
-            font-size: 0.85rem;
-            opacity: 0.7;
-        }
-
-        .side-panel-back {
-            padding: 0.75rem;
-            cursor: pointer;
-            background: var(--surface-light);
-            margin-bottom: 0.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .side-panel-back:hover {
-            background: var(--border);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Search Bar */
-        .search-bar {
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        .search-bar input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        /* Controls */
-        .controls {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        select {
-            padding: 0.5rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--text);
-            font-size: 0.9rem;
-        }
-
-        /* Song List */
-        .song-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .song-item {
-            padding: 1rem 0;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .song-item:active {
-            opacity: 0.7;
-        }
-
-        .song-item:last-child {
-            border-bottom: none;
-        }
-
-        .song-info {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .song-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            min-width: 200px;
-            flex: 1;
-        }
-
-        .song-artist {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            min-width: 150px;
-        }
-
-        .song-date {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            min-width: 120px;
-            text-align: right;
-        }
-
-        .song-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Song View */
-        .song-view {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg);
-            z-index: 200;
-            overflow-y: auto;
-        }
-
-        .song-view.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .song-controls {
-            background: var(--surface);
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid var(--border);
-            z-index: 10;
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 0.5rem;
-            align-items: center;
-            flex-shrink: 0;
-            transition: transform 0.3s ease;
-            max-width: 100%;
-            margin: 0 auto;
-            border-radius: 0 0 0.5rem 0.5rem;
-            justify-content: center;
-        }
-
-        .song-controls.hidden {
-            transform: translateY(-100%);
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-        }
-
-        .song-title-display {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .song-artist-display {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-
-        .song-content {
-            padding: 1.5rem;
-            padding-right: 4rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .song-content.paged {
-            height: calc(100vh - 200px);
-            overflow: hidden;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .page-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            padding: 1rem;
-            border-top: 1px solid var(--border);
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .page-controls.active {
-            display: flex;
-        }
-
-        .chord-line {
-            color: var(--primary);
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-
-        .lyric-line {
-            color: var(--text);
-        }
-
-        /* Scroll Indicator */
-        .scroll-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            animation: pulse 1.5s infinite;
-            z-index: 50;
-        }
-
-        .scroll-indicator.active {
-            display: flex;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        @keyframes slideDown {
-            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { transform: translateX(-50%) translateY(0); opacity: 1; }
-            to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 300;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: var(--surface);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-            padding: 0;
-            width: 2rem;
-            height: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 0.5rem;
-            color: var(--text);
-            font-size: 1rem;
-            font-family: inherit;
-        }
-
-        .form-group textarea {
-            min-height: 200px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
-        }
-
-        /* Settings */
-        .settings-section {
-            margin-bottom: 2rem;
-        }
-
-        .settings-section h3 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
-        }
-
-        .setting-item {
-            background: var(--surface);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border);
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .setting-label {
-            font-weight: 500;
-        }
-
-        .setting-description {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 26px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--border);
-            transition: .3s;
-            border-radius: 26px;
-        }
-
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .toggle-slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(24px);
-        }
-
-        /* Tuner */
-        .tuner-container {
-            text-align: center;
-            padding: 2rem 1rem;
-        }
-
-        .tuner-note {
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 2rem 0;
-        }
-
-        .tuner-frequency {
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        .tuner-indicator {
-            width: 100%;
-            height: 100px;
-            position: relative;
-            margin: 2rem 0;
-            background: var(--surface);
-            border-radius: 1rem;
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .tuner-needle {
-            position: absolute;
-            width: 4px;
-            height: 100%;
-            background: var(--primary);
-            left: 50%;
-            transform: translateX(-50%);
-            transition: left 0.1s;
-        }
-
-        .tuner-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            height: 100%;
-            width: 2px;
-            background: var(--success);
-        }
-
-        .tuner-status {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-top: 1rem;
-        }
-
-        .tuner-status.flat {
-            color: var(--warning);
-        }
-
-        .tuner-status.sharp {
-            color: var(--warning);
-        }
-
-        .tuner-status.in-tune {
-            color: var(--success);
-        }
-
-        /* Web Search Results */
-        .search-results {
-            margin-top: 1rem;
-        }
-
-        .search-result-item {
-            background: var(--bg);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 0.75rem;
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-        }
-
-        .search-result-item:hover {
-            border-color: var(--primary);
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-        }
-
-        .search-result-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            font-size: 1rem;
-        }
-
-        .search-result-source {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-secondary);
-        }
-
-        /* Setlist */
-        .setlist-item {
-            background: var(--surface);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border);
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .setlist-songs {
-            background: var(--bg);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .setlist-song {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .setlist-song:last-child {
-            border-bottom: none;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 1.2rem;
-            height: 1.2rem;
-        }
-
-        /* Add Song Method Selection */
-        .method-selection {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .method-card {
-            background: var(--bg);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            border: 2px solid var(--border);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-        }
-
-        .method-card:hover {
-            border-color: var(--primary);
-        }
-
-        .method-card.active {
-            border-color: var(--primary);
-            background: var(--surface-light);
-        }
-
-        .method-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .method-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .method-description {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .suggested-sites {
-            background: var(--bg);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .suggested-sites h4 {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .suggested-sites ul {
-            list-style: none;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .suggested-sites li {
-            padding: 0.25rem 0;
-        }
-    </style>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Song Caddie</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .chord-pro pre { white-space: pre-wrap; font-family: 'Courier New', Courier, monospace; font-size: 1.125rem; line-height: 1.6; }
+    .chord-pro .chord { color: #4f46e5; font-weight: bold; }
+    .draggable { cursor: move; user-select: none; }
+    .dragging { opacity: 0.5; background: #e5e7eb; }
+    body.dark { background-color: #111827; color: #f3f4f6; }
+    body.dark .bg-white { background-color: #1f2937; }
+    body.dark .bg-gray-50 { background-color: #111827; }
+    body.dark .text-gray-500, body.dark .text-gray-600 { color: #9ca3af; }
+    body.dark .border-gray-300 { border-color: #4b5563; }
+    body.dark .hover\:bg-indigo-50:hover { background-color: #374151; }
+    .letter-header { font-weight: bold; font-size: 1.1rem; color: #4f46e5; padding: 0.5rem 1rem; background: #f3f4f6; margin-top: 1rem; }
+    body.dark .letter-header { background: #374151; color: #a5b4fc; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+    /* Song controls – smaller, more transparent, at very bottom */
+    #songNav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      pointer-events: none;
+      z-index: 20;
+      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    }
+    .nav-arrow {
+      position: absolute;
+      bottom: 16px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.25);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      pointer-events: auto;
+      transition: all 0.2s;
+    }
+    .nav-arrow:hover { background: rgba(255,255,255,0.45); transform: scale(1.1); }
+    #prevSong { left: 16px; }
+    #nextSong { right: 16px; }
+    #autoScrollBtn {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.25);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      pointer-events: auto;
+      transition: all 0.2s;
+    }
+    #autoScrollBtn:hover { background: rgba(255,255,255,0.45); transform: translateX(-50%) scale(1.1); }
+    #timeDisplay {
+      position: fixed;
+      top: 12px;
+      left: 16px;
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      font-family: system-ui, sans-serif;
+      pointer-events: none;
+      z-index: 20;
+    }
+    #lyricsContainer {
+      margin-top: 20px; /* reduced top margin → lyrics higher */
+      padding-bottom: 100px; /* space for bottom controls */
+    }
+  </style>
 </head>
-<body>
-    <!-- Header -->
-    <div class="header">
-        <div class="logo">🎵 Melodex</div>
-        <div class="nav-tabs-inline">
-            <button class="nav-tab active" onclick="switchTab(&#39;songs&#39;)">Songs</button>
-            <button class="nav-tab" onclick="switchTab(&#39;setlists&#39;)">Setlists</button>
-            <button class="nav-tab" onclick="switchTab(&#39;tuner&#39;)">Tuner</button>
-            <button class="nav-tab" onclick="switchTab(&#39;settings&#39;)" title="Settings">⚙</button>
-        </div>
-    </div>
+<body class="bg-gray-50 min-h-screen antialiased">
 
-    <!-- Navigation Tabs (hidden, kept for compatibility) -->
-    <div class="nav-tabs" id="navTabs" style="display: none;">
-        <button class="nav-tab active" onclick="switchTab(&#39;songs&#39;)">Songs</button>
-        <button class="nav-tab" onclick="switchTab(&#39;setlists&#39;)">Setlists</button>
-        <button class="nav-tab" onclick="switchTab(&#39;tuner&#39;)">Tuner</button>
-        <button class="nav-tab" onclick="switchTab(&#39;settings&#39;)">⚙</button>
-    </div>
+  <!-- Splash -->
+  <div id="splash" class="fixed inset-0 bg-gradient-to-br from-blue-900 to-indigo-950 flex items-center justify-center z-50 transition-opacity duration-800 pointer-events-auto">
+    <img src="logo-splash.png" alt="Song Caddie Logo" class="w-80 md:w-[500px] drop-shadow-2xl"/>
+  </div>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Songs Tab -->
-        <div class="tab-content active" id="songsTab">
-            <div class="controls">
-                <button class="btn-primary" onclick="showAddSongModal()">+ Add Song</button>
-                <select id="sortOrder" onchange="sortSongs()">
-                    <option value="recent">Recently Added</option>
-                    <option value="alpha-title">Title (A-Z)</option>
-                    <option value="alpha-artist">Artist (A-Z)</option>
-                </select>
-            </div>
-            
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search songs..." oninput="filterSongs()">
-            </div>
+  <!-- Main -->
+  <div id="main" class="hidden relative min-h-screen">
 
-            <div class="song-list" id="songList">
-                    <div class="song-item" onclick="openSong(1770582933976)">
-                        <div class="song-info">
-                            <div class="song-title">Highwayman</div>
-                            <div class="song-artist">The Highwaymen</div>
-                            <div class="song-date">yesterday</div>
-                        </div>
-                    </div>
-                
-                    <div class="song-item" onclick="openSong(1770572460180)">
-                        <div class="song-info">
-                            <div class="song-title">I Got a Name</div>
-                            <div class="song-artist">Jim Croce</div>
-                            <div class="song-date">yesterday</div>
-                        </div>
-                    </div>
-                
-                    <div class="song-item" onclick="openSong(1770571165316)">
-                        <div class="song-info">
-                            <div class="song-title">Gentle on My Mind</div>
-                            <div class="song-artist">Glen Campbell</div>
-                            <div class="song-date">yesterday</div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Hamburger menu – hidden when panel open -->
+    <button id="menuBtn" class="fixed top-4 right-4 z-30 text-gray-800 hover:text-indigo-600 transition hidden">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
 
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <div class="empty-state-icon">🎸</div>
-                <h3>No Songs Yet</h3>
-                <p>Add your first song to get started!</p>
-            </div>
+    <main class="p-6 pt-16 max-w-3xl mx-auto relative"> <!-- reduced pt-20 → pt-16 so content starts higher -->
+      <div id="noSong" class="text-center py-20 text-gray-500">
+        <p class="text-xl mb-8">Select a song from the menu →</p>
+        <img src="logo-splash.png" alt="Song Caddie Logo" class="mx-auto w-48 md:w-64 opacity-80"/>
+      </div>
+
+      <!-- Song view -->
+      <div id="songView" class="hidden bg-white rounded-xl shadow p-6 relative min-h-[calc(100vh-4rem)]">
+        <div id="timeDisplay"></div>
+
+        <h1 id="songTitle" class="text-3xl font-bold mb-1"></h1>
+        <p id="songArtist" class="text-gray-600 mb-4"></p>
+
+        <div class="chord-pro overflow-y-auto" id="lyricsContainer">
+          <pre id="songLyrics"></pre>
         </div>
 
-        <!-- Setlists Tab -->
-        <div class="tab-content" id="setlistsTab">
-            <div class="controls">
-                <button class="btn-primary" onclick="showCreateSetlistModal()">+ Create Setlist</button>
-            </div>
-
-            <div id="setlistList"></div>
-
-            <div class="empty-state" id="emptySetlistState" style="display: block;">
-                <div class="empty-state-icon">📋</div>
-                <h3>No Setlists Yet</h3>
-                <p>Create a setlist to organize your songs!</p>
-            </div>
+        <!-- Controls overlay – fixed at bottom -->
+        <div id="songNav">
+          <button id="prevSong" class="nav-arrow">←</button>
+          <button id="nextSong" class="nav-arrow">→</button>
+          <button id="autoScrollBtn">▶</button>
         </div>
+      </div>
+    </main>
 
-        <!-- Tuner Tab -->
-        <div class="tab-content" id="tunerTab">
-            <div class="tuner-container">
-                <h2>Chromatic Tuner</h2>
-                <div class="tuner-note" id="tunerNote">--</div>
-                <div class="tuner-frequency" id="tunerFrequency">-- Hz</div>
-                <div class="tuner-indicator">
-                    <div class="tuner-center"></div>
-                    <div class="tuner-needle" id="tunerNeedle"></div>
-                </div>
-                <div class="tuner-status" id="tunerStatus">Play a note</div>
-                <button class="btn-primary" onclick="toggleTuner()" id="tunerBtn">Start Tuner</button>
-            </div>
-        </div>
+    <!-- Side panel -->
+    <div id="sidePanel" class="fixed inset-y-0 right-0 w-[66%] max-w-sm bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-20 flex flex-col">
+      <div class="p-3 border-b flex items-center gap-3 flex-wrap shrink-0">
+        <img src="logo-text-small.png" alt="Song Caddie Text Logo" class="h-9 md:h-10"/>
+        <button class="view-tab px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-indigo-600 text-white" data-view="songs">Songs</button>
+        <button class="view-tab px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300" data-view="sets">Sets</button>
+      </div>
 
-        <!-- Settings Tab -->
-        <div class="tab-content" id="settingsTab">
-            <div class="settings-section">
-                <h3>Appearance</h3>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Theme</div>
-                        <div class="setting-description">Choose your preferred color theme</div>
-                    </div>
-                    <select id="themeSelect" onchange="changeTheme()">
-                        <option value="dark">Dark</option>
-                        <option value="light">Light</option>
-                    </select>
-                </div>
-            </div>
+      <div id="panelContent" class="p-2 flex-1 overflow-hidden flex flex-col"></div>
 
-            <div class="settings-section">
-                <h3>Song Display</h3>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Display Mode</div>
-                        <div class="setting-description">Scroll or split into pages</div>
-                    </div>
-                    <select id="displayMode" onchange="changeDisplayMode()">
-                        <option value="scroll">Scroll</option>
-                        <option value="pages">Pages</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Bluetooth Pedal</h3>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Enable Bluetooth Pedal</div>
-                        <div class="setting-description">Use a Bluetooth pedal to turn pages</div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="pedalToggle" onchange="togglePedal()">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item" id="pedalSettings" style="display: none;">
-                    <div>
-                        <div class="setting-label">Pedal Status</div>
-                        <div class="setting-description" id="pedalStatus">Not connected</div>
-                    </div>
-                    <button class="btn-secondary" onclick="connectPedal()">Connect</button>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Data</h3>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Export Songs</div>
-                        <div class="setting-description">Download all your songs as JSON</div>
-                    </div>
-                    <button class="btn-secondary" onclick="exportData()">Export</button>
-                </div>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Import Songs</div>
-                        <div class="setting-description">Import songs from a JSON file</div>
-                    </div>
-                    <button class="btn-secondary" onclick="importData()">Import</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Song View -->
-    <div class="song-view" id="songView">
-        <button class="btn-hamburger btn-collapse" id="hamburgerBtn" onclick="toggleSongControlBar()" style="position: fixed; top: 1rem; right: 1rem; z-index: 1000;" title="Hide Controls">
-            <span style="display: block; width: 20px; height: 2px; background: currentColor;"></span>
-            <span style="display: block; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid currentColor; margin-top: 2px;"></span>
+      <div class="p-2 border-t flex justify-between items-center shrink-0 bg-gray-50 relative">
+        <button id="editToggleBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Toggle edit mode">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <polyline points="9 11 12 14 15 11"></polyline>
+          </svg>
         </button>
-        <button class="btn-hamburger" id="sidePanelBtn" onclick="toggleSidePanel()" style="position: fixed; top: 50%; right: 1rem; z-index: 1000; transform: translateY(-50%);" title="Song List">≡</button>
-        
-        <div class="song-controls" id="songControlsBar">
-            <button class="btn-control-icon" onclick="closeSong()" title="Back to Menu">⌂</button>
-            <button class="btn-control-icon" onclick="previousSongInList()" title="Previous Song" id="prevSongBtn">⏮</button>
-            <button class="btn-control-icon" onclick="nextSongInList()" title="Next Song" id="nextSongBtn">⏭</button>
-            <button class="btn-control-icon" id="autoScrollBtn" onclick="toggleAutoScroll()" title="Auto Scroll">⏯</button>
-            <button class="btn-control-icon" onclick="openTuner()" title="Tuner">♪</button>
-            <button class="btn-control-icon" onclick="showEditMenu()" title="Edit">✎</button>
-            <button class="btn-control-icon" onclick="deleteCurrentSong()" title="Delete">🗑</button>
-        </div>
-        
-        <!-- Side Panel -->
-        <div class="side-panel" id="sidePanel">
-            <div class="side-panel-header">
-                <h3 id="sidePanelTitle">Songs</h3>
-                <button class="btn-control-icon" onclick="toggleSidePanel()" title="Close">×</button>
-            </div>
-            <div class="side-panel-tabs">
-                <button class="side-panel-tab active" onclick="showPanelView(&#39;songs&#39;)">All Songs</button>
-                <button class="side-panel-tab" onclick="showPanelView(&#39;artists&#39;)">Artists</button>
-                <button class="side-panel-tab" onclick="showPanelView(&#39;setlists&#39;)">Setlists</button>
-            </div>
-            <div class="side-panel-content" id="sidePanelContent"></div>
-        </div>
-        
-        <div class="song-content" id="songContent" onclick="closePanelOnLyricsClick(event)"></div>
-        <div class="page-controls" id="pageControls">
-            <button class="btn-secondary" onclick="previousPage()">← Previous</button>
-            <span id="pageIndicator">Page 1 of 1</span>
-            <button class="btn-secondary" onclick="nextPage()">Next →</button>
-        </div>
+
+        <div id="editToolbar" class="flex gap-4"></div>
+
+        <button id="settingsBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Settings">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <div class="scroll-indicator" id="scrollIndicator">↓</div>
+    <div id="backdrop" class="fixed inset-0 bg-black/30 z-10 hidden" onclick="closePanel()"></div>
 
-    <!-- Edit Menu Modal -->
-    <div class="modal" id="editMenuModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Edit Options</h2>
-                <button class="close-btn" onclick="closeEditMenu()">×</button>
-            </div>
-
-            <div class="form-group">
-                <label>Song Key</label>
-                <input type="text" id="editSongKey" placeholder="e.g., C, G, Am">
-            </div>
-
-            <div class="form-group">
-                <label>Transpose</label>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <button class="btn-secondary" onclick="transposeDown()">− Down</button>
-                    <span id="transposeDisplay" style="flex: 1; text-align: center; font-weight: 600;">0</span>
-                    <button class="btn-secondary" onclick="transposeUp()">+ Up</button>
-                </div>
-                <button class="btn-secondary" onclick="resetTranspose()" style="width: 100%; margin-top: 0.5rem;">Reset to Original</button>
-            </div>
-
-            <div class="form-group">
-                <label>Show/Hide Chords</label>
-                <button class="btn-secondary" id="toggleChordsMenuBtn" onclick="toggleChordsFromMenu()" style="width: 100%;">Hide Chords</button>
-            </div>
-
-            <div class="form-group">
-                <label>Text Size</label>
-                <select id="textSizeMenu" onchange="changeTextSizeFromMenu()">
-                    <option value="0.8">Small</option>
-                    <option value="0.9">Medium-Small</option>
-                    <option value="1" selected="">Medium</option>
-                    <option value="1.2">Large</option>
-                    <option value="1.4">X-Large</option>
-                    <option value="1.6">XX-Large</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Text Color</label>
-                <select id="textColorMenu" onchange="changeTextColor()">
-                    <option value="default">Default</option>
-                    <option value="#f1f5f9">White</option>
-                    <option value="#e2e8f0">Light Gray</option>
-                    <option value="#fbbf24">Yellow</option>
-                    <option value="#60a5fa">Light Blue</option>
-                    <option value="#34d399">Green</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Font Style</label>
-                <select id="fontStyleMenu" onchange="changeFontStyle()">
-                    <option value="&#39;Courier New&#39;, monospace">Courier (Default)</option>
-                    <option value="-apple-system, sans-serif">System Font</option>
-                    <option value="Georgia, serif">Georgia</option>
-                    <option value="&#39;Times New Roman&#39;, serif">Times New Roman</option>
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="Verdana, sans-serif">Verdana</option>
-                </select>
-            </div>
-
-            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                <button class="btn-primary" onclick="editCurrentSongContent()" style="width: 100%; margin-bottom: 0.5rem;">Edit Song Content</button>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeEditMenu()">Close</button>
-            </div>
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+      <div class="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-md">
+        <h2 class="text-xl font-bold mb-4">Settings</h2>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">Theme</label>
+          <select id="themeSelect" class="w-full p-2 border rounded">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
         </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-1">Song Font Size</label>
+          <select id="fontSizeSelect" class="w-full p-2 border rounded">
+            <option value="">Default</option>
+            <option value="small">Small</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-2">
+          <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded">Close</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Add/Edit Song Modal -->
-    <div class="modal" id="addSongModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="songModalTitle">Add Song</h2>
-                <button class="close-btn" onclick="closeAddSongModal()">×</button>
-            </div>
-
-            <div class="method-selection" id="methodSelection">
-                <div class="method-card active" onclick="selectMethod(&#39;manual&#39;, this)">
-                    <div class="method-icon">✍️</div>
-                    <div class="method-title">Add Manually</div>
-                    <div class="method-description">Type or paste song details</div>
-                </div>
-                <div class="method-card" onclick="selectMethod(&#39;search&#39;, this)">
-                    <div class="method-icon">🔍</div>
-                    <div class="method-title">Search Web</div>
-                    <div class="method-description">Find songs online</div>
-                </div>
-            </div>
-
-            <div id="manualForm">
-                <div class="form-group">
-                    <label>Title *</label>
-                    <input type="text" id="songTitle" placeholder="Song title">
-                </div>
-                <div class="form-group">
-                    <label>Artist</label>
-                    <input type="text" id="songArtist" placeholder="Artist name">
-                </div>
-                <div class="form-group">
-                    <label>Key</label>
-                    <input type="text" id="songKey" placeholder="e.g., C, G, Am">
-                </div>
-                <div class="form-group">
-                    <label>Lyrics &amp; Chords *</label>
-                    <textarea id="songLyrics" placeholder="Paste lyrics with chords above the words..."></textarea>
-                </div>
-            </div>
-
-            <div id="searchForm" style="display: none;">
-                <div class="form-group">
-                    <label>Search for a song</label>
-                    <input type="text" id="webSearchInput" placeholder="Enter song title and artist...">
-                </div>
-                <button class="btn-primary" onclick="searchWebSongs()" style="width: 100%; margin-bottom: 1rem;">Search</button>
-
-                <div class="suggested-sites">
-                    <h4>⚡ Pro Tips:</h4>
-                    <ul style="line-height: 1.8;">
-                        <li>• <strong>Best for beginners:</strong> Ultimate Guitar, E-Chords</li>
-                        <li>• <strong>Best for accuracy:</strong> Chordify (auto-detects from audio)</li>
-                        <li>• <strong>Multiple versions:</strong> Chordie (aggregates many sources)</li>
-                        <li>• <strong>Keyboard shortcut:</strong> Press Ctrl+K (Cmd+K on Mac) to quickly open Add Song</li>
-                    </ul>
-                </div>
-
-                <div id="searchResults" class="search-results"></div>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeAddSongModal()">Cancel</button>
-                <button class="btn-primary" onclick="saveSong()" id="saveSongBtn">Save Song</button>
-            </div>
+    <!-- Confirm Delete -->
+    <div id="confirmDeleteModal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+      <div class="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-sm text-center">
+        <h3 class="text-lg font-bold mb-4">Delete selected item(s)?</h3>
+        <p class="text-gray-600 mb-6">This cannot be undone.</p>
+        <div class="flex justify-center gap-4">
+          <button onclick="document.getElementById('confirmDeleteModal').classList.add('hidden')" class="px-6 py-2 bg-gray-300 rounded">No</button>
+          <button onclick="confirmDelete()" class="px-6 py-2 bg-red-600 text-white rounded">Yes</button>
         </div>
+      </div>
     </div>
 
-    <!-- Create Setlist Modal -->
-    <div class="modal" id="createSetlistModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Create Setlist</h2>
-                <button class="close-btn" onclick="closeCreateSetlistModal()">×</button>
-            </div>
-
-            <div class="form-group">
-                <label>Setlist Name *</label>
-                <input type="text" id="setlistName" placeholder="e.g., Sunday Service, Open Mic Night">
-            </div>
-
-            <div class="form-group">
-                <label>Select Songs</label>
-                <div id="songCheckboxList"></div>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-secondary" onclick="closeCreateSetlistModal()">Cancel</button>
-                <button class="btn-primary" onclick="saveSetlist()">Create Setlist</button>
-            </div>
+    <!-- Add Song Modal -->
+    <div id="addSongModal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+      <div class="bg-white p-5 rounded-lg shadow-xl w-11/12 max-w-md">
+        <h2 class="text-lg font-bold mb-3">Add New Song</h2>
+        <input id="addTitle" type="text" placeholder="Title" class="w-full p-2 border rounded mb-2 text-sm">
+        <input id="addArtist" type="text" placeholder="Artist" class="w-full p-2 border rounded mb-2 text-sm">
+        <textarea id="addLyrics" placeholder="Lyrics with chords..." class="w-full p-2 border rounded mb-3 h-28 text-sm"></textarea>
+        <div class="flex justify-end gap-2">
+          <button onclick="document.getElementById('addSongModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm">Cancel</button>
+          <button onclick="saveNewSong()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm">Save</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Edit Song Modal -->
+    <div id="editSongModal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+      <div class="bg-white p-5 rounded-lg shadow-xl w-11/12 max-w-md">
+        <h2 class="text-lg font-bold mb-3">Edit Song</h2>
+        <input id="editTitle" type="text" placeholder="Title" class="w-full p-2 border rounded mb-2 text-sm">
+        <input id="editArtist" type="text" placeholder="Artist" class="w-full p-2 border rounded mb-2 text-sm">
+        <textarea id="editLyrics" placeholder="Lyrics with chords..." class="w-full p-2 border rounded mb-3 h-28 text-sm"></textarea>
+        <div class="flex justify-end gap-2">
+          <button onclick="document.getElementById('editSongModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm">Cancel</button>
+          <button onclick="saveEditedSong()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Set Modal -->
+    <div id="addSetModal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+      <div class="bg-white p-5 rounded-lg shadow-xl w-11/12 max-w-md">
+        <h2 class="text-lg font-bold mb-3">New Set</h2>
+        <input id="addSetName" type="text" placeholder="Set Name" class="w-full p-2 border rounded mb-3 text-sm">
+        <div class="flex justify-end gap-2">
+          <button onclick="document.getElementById('addSetModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm">Cancel</button>
+          <button onclick="saveNewSet()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm">Create</button>
+        </div>
+      </div>
     </div>
 
     <script>
-        // State
-        let songs = JSON.parse(localStorage.getItem('melodex_songs') || '[]');
-        let setlists = JSON.parse(localStorage.getItem('melodex_setlists') || '[]');
-        let settings = JSON.parse(localStorage.getItem('melodex_settings') || '{"theme":"dark","displayMode":"scroll","pedalEnabled":false}');
-        let currentSong = null;
-        let currentTranspose = 0;
-        let showChords = true;
-        let autoScrollInterval = null;
-        let editingId = null;
-        let addMethod = 'manual';
-        let currentPage = 0;
-        let totalPages = 1;
-        let pages = [];
+      let songs = JSON.parse(localStorage.getItem('songCaddieSongs')) || [];
+      let setlists = JSON.parse(localStorage.getItem('songCaddieSetlists')) || [];
+      let currentView = 'songs';
+      let currentSort = 'date';
+      let selectedSetlist = null;
+      let editMode = false;
+      let selectedIds = new Set();
+      let currentArtistFilter = null;
+      let renamingSetId = null;
+      let lastListState = null;
 
-        // Tuner state
-        let audioContext = null;
-        let analyser = null;
-        let microphone = null;
-        let tunerActive = false;
+      let currentSongIndex = -1;
+      let currentSongList = [];
+      let autoScrollInterval = null;
+      let isScrolling = false;
 
-        // Pedal state
-        let pedalConnected = false;
-        let menuHidden = false;
-        let controlsExpanded = true;
-        let currentArtistView = null;
-        let navigationContext = []; // Array of song IDs in current view
-        let currentSongIndex = -1; // Index in navigationContext
-        let currentPanelView = 'songs'; // Current side panel view
-        let currentPanelArtist = null; // For artist drill-down in panel
+      function saveData() {
+        localStorage.setItem('songCaddieSongs', JSON.stringify(songs));
+        localStorage.setItem('songCaddieSetlists', JSON.stringify(setlists));
+      }
 
-        // Initialize
-        window.addEventListener('load', () => {
-            renderSongs();
-            renderSetlists();
-            applySettings();
-            
-            // Add keyboard shortcut for quick add song: Ctrl/Cmd + K
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                    e.preventDefault();
-                    showAddSongModal();
-                }
-            });
-        });
+      function openPanel() {
+        document.getElementById('sidePanel').classList.remove('translate-x-full');
+        document.getElementById('backdrop').classList.remove('hidden');
+        document.getElementById('menuBtn').classList.add('hidden');
+        renderPanelContent();
+      }
 
-        // Navigation
-        function switchTab(tabName) {
-            // Remove active class from all tabs in both locations
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      function closePanel() {
+        document.getElementById('sidePanel').classList.add('translate-x-full');
+        document.getElementById('backdrop').classList.add('hidden');
+        document.getElementById('menuBtn').classList.remove('hidden');
+        editMode = false;
+        selectedIds.clear();
+        currentArtistFilter = null;
+        renamingSetId = null;
+        renderPanelContent();
+      }
 
-            // Add active class to selected tab
-            const clickedTabs = Array.from(document.querySelectorAll('.nav-tab')).filter(tab => {
-                const text = tab.textContent.toLowerCase().trim();
-                return text === tabName.toLowerCase() || 
-                       (tabName === 'settings' && text === '⚙');
-            });
-            clickedTabs.forEach(tab => tab.classList.add('active'));
-            
-            document.getElementById(tabName + 'Tab').classList.add('active');
+      document.getElementById('backdrop').onclick = closePanel;
 
-            // Stop tuner if switching away from tuner tab
-            if (tabName !== 'tuner' && tunerActive) {
-                stopTuner();
-            }
+      let touchStartX = 0;
+      document.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+      document.addEventListener('touchmove', e => {
+        if (touchStartX - e.touches[0].clientX > 70) closePanel();
+      });
+
+      // Splash
+      setTimeout(() => {
+        const splash = document.getElementById('splash');
+        splash.style.opacity = '0';
+        setTimeout(() => {
+          splash.style.display = 'none';
+          document.getElementById('main').classList.remove('hidden');
+          document.getElementById('menuBtn').classList.remove('hidden');
+          renderPanelContent();
+        }, 800);
+      }, 1200);
+
+      document.getElementById('splash').addEventListener('click', () => {
+        const splash = document.getElementById('splash');
+        splash.style.opacity = '0';
+        setTimeout(() => {
+          splash.style.display = 'none';
+          document.getElementById('main').classList.remove('hidden');
+          document.getElementById('menuBtn').classList.remove('hidden');
+          renderPanelContent();
+        }, 800);
+      });
+
+      // Menu button
+      document.getElementById('menuBtn').onclick = () => {
+        if (!document.getElementById('songView').classList.contains('hidden')) {
+          document.getElementById('songView').classList.add('hidden');
+          document.getElementById('noSong').classList.remove('hidden');
+
+          if (lastListState) {
+            currentView = lastListState.view;
+            selectedSetlist = lastListState.selectedSetlist || null;
+            currentArtistFilter = lastListState.currentArtistFilter || null;
+            currentSort = lastListState.currentSort || 'date';
+          } else {
+            currentView = 'songs';
+            selectedSetlist = null;
+            currentArtistFilter = null;
+            currentSort = 'date';
+          }
+
+          renderPanelContent();
+          openPanel();
+        } else {
+          openPanel();
         }
+      };
 
-        // Song Management
-        function showAddSongModal() {
-            editingId = null;
-            document.getElementById('songModalTitle').textContent = 'Add Song';
-            document.getElementById('songTitle').value = '';
-            document.getElementById('songArtist').value = '';
-            document.getElementById('songKey').value = '';
-            document.getElementById('songLyrics').value = '';
-            document.getElementById('webSearchInput').value = '';
-            document.getElementById('searchResults').innerHTML = '';
-            selectMethod('manual');
-            document.getElementById('addSongModal').classList.add('active');
+      document.querySelectorAll('.view-tab').forEach(tab => {
+        tab.onclick = () => {
+          currentView = tab.dataset.view;
+          selectedSetlist = null;
+          currentArtistFilter = null;
+          renamingSetId = null;
+          lastListState = null;
+          document.querySelectorAll('.view-tab').forEach(t => {
+            t.classList.remove('bg-indigo-600', 'text-white');
+            t.classList.add('bg-gray-200', 'text-gray-700');
+          });
+          tab.classList.add('bg-indigo-600', 'text-white');
+          tab.classList.remove('bg-gray-200', 'text-gray-700');
+          renderPanelContent();
+        };
+      });
+
+      document.getElementById('editToggleBtn').onclick = () => {
+        editMode = !editMode;
+        selectedIds.clear();
+        renamingSetId = null;
+        const btn = document.getElementById('editToggleBtn');
+        btn.innerHTML = editMode ?
+          `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>` :
+          `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><polyline points="9 11 12 14 15 11"></polyline></svg>`;
+        renderPanelContent();
+      };
+
+      document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.remove('hidden');
+
+      document.getElementById('themeSelect').onchange = e => {
+        document.body.classList.toggle('dark', e.target.value === 'dark');
+        localStorage.setItem('theme', e.target.value);
+      };
+
+      document.getElementById('fontSizeSelect').onchange = e => {
+        document.body.classList.remove('font-small', 'font-large');
+        if (e.target.value) document.body.classList.add('font-' + e.target.value);
+        localStorage.setItem('fontSize', e.target.value);
+      };
+
+      const theme = localStorage.getItem('theme') || 'light';
+      document.getElementById('themeSelect').value = theme;
+      document.body.classList.toggle('dark', theme === 'dark');
+
+      const font = localStorage.getItem('fontSize') || '';
+      document.getElementById('fontSizeSelect').value = font;
+      if (font) document.body.classList.add('font-' + font);
+
+      // Time display
+      function updateTime() {
+        const now = new Date();
+        document.getElementById('timeDisplay').textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }
+      setInterval(updateTime, 1000);
+      updateTime();
+
+      // Autoscroll
+      function toggleAutoScroll() {
+        const btn = document.getElementById('autoScrollBtn');
+        if (isScrolling) {
+          clearInterval(autoScrollInterval);
+          isScrolling = false;
+          btn.innerHTML = '▶';
+        } else {
+          const container = document.getElementById('lyricsContainer');
+          autoScrollInterval = setInterval(() => {
+            container.scrollBy(0, 1.2); // speed – increase 1.2 for faster
+          }, 100);
+          isScrolling = true;
+          btn.innerHTML = '⏸';
         }
+      }
+      document.getElementById('autoScrollBtn').onclick = toggleAutoScroll;
 
-        function closeAddSongModal() {
-            document.getElementById('addSongModal').classList.remove('active');
+      // Prev / Next
+      function goPrevSong() {
+        if (currentSongIndex > 0) {
+          currentSongIndex--;
+          showSong(currentSongList[currentSongIndex]);
         }
+      }
 
-        function selectMethod(method, clickedElement) {
-            addMethod = method;
-            document.querySelectorAll('.method-card').forEach(card => card.classList.remove('active'));
-            
-            // If called from click, use the clicked element, otherwise find by method
-            if (clickedElement) {
-                clickedElement.classList.add('active');
-            } else {
-                const cards = document.querySelectorAll('.method-card');
-                if (method === 'manual') {
-                    cards[0].classList.add('active');
-                } else {
-                    cards[1].classList.add('active');
-                }
-            }
-
-            if (method === 'manual') {
-                document.getElementById('manualForm').style.display = 'block';
-                document.getElementById('searchForm').style.display = 'none';
-                document.getElementById('saveSongBtn').style.display = 'block';
-            } else {
-                document.getElementById('manualForm').style.display = 'none';
-                document.getElementById('searchForm').style.display = 'block';
-                document.getElementById('saveSongBtn').style.display = 'none';
-            }
+      function goNextSong() {
+        if (currentSongIndex < currentSongList.length - 1) {
+          currentSongIndex++;
+          showSong(currentSongList[currentSongIndex]);
         }
+      }
 
-        function searchWebSongs() {
-            const query = document.getElementById('webSearchInput').value;
-            if (!query) {
-                alert('Please enter a search query');
-                return;
-            }
+      document.getElementById('prevSong').onclick = goPrevSong;
+      document.getElementById('nextSong').onclick = goNextSong;
 
-            const resultsDiv = document.getElementById('searchResults');
-            resultsDiv.innerHTML = '<div class="loading">🔍 Searching chord websites for "' + query + '"...</div>';
-
-            // Generate results from multiple chord sites
-            setTimeout(() => {
-                const sites = [
-                    { 
-                        name: 'Ultimate Guitar',
-                        url: `https://www.ultimate-guitar.com/search.php?search_type=title&value=${encodeURIComponent(query)}`,
-                        icon: '🎸',
-                        desc: 'Most popular, user-submitted tabs'
-                    },
-                    { 
-                        name: 'Chordify',
-                        url: `https://chordify.net/search/${encodeURIComponent(query)}`,
-                        icon: '🎵',
-                        desc: 'Auto-generated chords from audio'
-                    },
-                    { 
-                        name: 'E-Chords',
-                        url: `https://www.e-chords.com/search?q=${encodeURIComponent(query)}`,
-                        icon: '🎹',
-                        desc: 'Clean layouts, multiple versions'
-                    },
-                    { 
-                        name: 'Chordie',
-                        url: `https://www.chordie.com/results.php?q=${encodeURIComponent(query)}`,
-                        icon: '🎼',
-                        desc: 'Aggregates from multiple sources'
-                    },
-                    { 
-                        name: 'AZChords',
-                        url: `https://www.azchords.com/search.php?q=${encodeURIComponent(query)}`,
-                        icon: '📖',
-                        desc: 'Simple interface, easy to copy'
-                    }
-                ];
-
-                resultsDiv.innerHTML = `
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: var(--primary); color: white; border-radius: 0.5rem; font-weight: 500;">
-                        💡 Quick Workflow: Click a website → Copy the chords → Click "Ready to Paste" below
-                    </div>
-                    
-                    <div style="display: grid; gap: 0.75rem; margin-bottom: 1.5rem;">
-                        ${sites.map((site, idx) => `
-                            <div class="search-result-item" style="display: flex; justify-content: space-between; align-items: center;">
-                                <div style="flex: 1;">
-                                    <div class="search-result-title">
-                                        ${site.icon} ${site.name}
-                                    </div>
-                                    <div class="search-result-source">${site.desc}</div>
-                                </div>
-                                <button class="btn-primary" onclick="window.open('${site.url}', '_blank', 'width=800,height=600'); highlightPasteArea();" style="white-space: nowrap;">
-                                    Open ${site.name} →
-                                </button>
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <div style="padding: 1.5rem; background: var(--surface-light); border-radius: 0.5rem; border: 2px dashed var(--border);">
-                        <div style="font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem;">✅ Ready to paste your chords?</div>
-                        <div style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
-                            After copying from a website above, click the button below to switch to the manual form where you can paste.
-                        </div>
-                        <button class="btn-primary" onclick="switchToPasteMode('${query}')" style="width: 100%; padding: 0.75rem; font-size: 1rem;">
-                            📋 I've Copied - Let Me Paste Now
-                        </button>
-                    </div>
-                `;
-            }, 500);
+      // Swipe detection on song view
+      let touchStartXSong = 0;
+      document.getElementById('songView').addEventListener('touchstart', e => {
+        touchStartXSong = e.touches[0].clientX;
+      });
+      document.getElementById('songView').addEventListener('touchend', e => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartXSong - touchEndX;
+        if (Math.abs(diff) > 60) {
+          if (diff > 0) goNextSong();
+          else goPrevSong();
         }
+      });
 
-        function switchToPasteMode(songQuery) {
-            // Switch to manual mode
-            selectMethod('manual');
-            
-            // Pre-fill the title if we have a query
-            if (songQuery) {
-                document.getElementById('songTitle').value = songQuery;
-            }
-            
-            // Focus on the lyrics textarea
-            setTimeout(() => {
-                const lyricsField = document.getElementById('songLyrics');
-                lyricsField.focus();
-                
-                // Highlight the textarea
-                lyricsField.style.border = '2px solid var(--primary)';
-                lyricsField.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                
-                // Show a tooltip
-                showPasteTooltip();
-                
-                // Remove highlight after paste or after 5 seconds
-                const removeHighlight = () => {
-                    lyricsField.style.border = '1px solid var(--border)';
-                    lyricsField.style.boxShadow = 'none';
-                };
-                
-                lyricsField.addEventListener('paste', removeHighlight, { once: true });
-                setTimeout(removeHighlight, 5000);
-            }, 100);
-        }
-
-        function highlightPasteArea() {
-            // Show a subtle notification
-            const notification = document.createElement('div');
-            notification.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 1rem 1.5rem; border-radius: 0.5rem; z-index: 1000; animation: slideUp 0.3s reverse; box-shadow: 0 4px 12px rgba(0,0,0,0.3);';
-            notification.innerHTML = '👆 Copy the chords, then click<br><strong>"I\'ve Copied - Let Me Paste Now"</strong>';
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideUp 0.3s';
-                setTimeout(() => notification.remove(), 300);
-            }, 4000);
-        }
-
-        function showPasteTooltip() {
-            const tooltip = document.createElement('div');
-            tooltip.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--success); color: white; padding: 2rem 3rem; border-radius: 1rem; z-index: 1001; font-size: 1.2rem; font-weight: 600; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4); animation: slideDown 0.3s;';
-            tooltip.innerHTML = '📋 Paste your chords here!<br><span style="font-size: 0.9rem; font-weight: 400; margin-top: 0.5rem; display: block;">Press Ctrl+V (or Cmd+V on Mac)</span>';
-            document.body.appendChild(tooltip);
-            
-            setTimeout(() => {
-                tooltip.style.animation = 'slideUp 0.3s';
-                setTimeout(() => tooltip.remove(), 300);
-            }, 2500);
-        }
-
-        function addFromSearch(title, artist, key, preview, source) {
-            // Populate the manual form with the selected result
-            document.getElementById('songTitle').value = title;
-            document.getElementById('songArtist').value = artist;
-            document.getElementById('songKey').value = key;
-            document.getElementById('songLyrics').value = preview;
-            
-            // Switch to manual method
-            selectMethod('manual');
-            
-            // Show confirmation message
-            const notification = document.createElement('div');
-            notification.style.cssText = 'position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 1rem 2rem; border-radius: 0.5rem; z-index: 1000; animation: slideDown 0.3s;';
-            notification.textContent = `✓ Loaded preview from ${source}. Edit and save!`;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideUp 0.3s';
-                setTimeout(() => notification.remove(), 300);
-            }, 2000);
-        }
-
-        function saveSong() {
-            const title = document.getElementById('songTitle').value.trim();
-            const artist = document.getElementById('songArtist').value.trim();
-            const key = document.getElementById('songKey').value.trim();
-            const lyrics = document.getElementById('songLyrics').value.trim();
-
-            if (!title || !lyrics) {
-                alert('Please enter at least a title and lyrics');
-                return;
-            }
-
-            const song = {
-                id: editingId || Date.now(),
-                title,
-                artist,
-                key,
-                lyrics,
-                dateAdded: editingId ? (songs.find(s => s.id === editingId)?.dateAdded || Date.now()) : Date.now()
-            };
-
-            if (editingId) {
-                const index = songs.findIndex(s => s.id === editingId);
-                songs[index] = song;
-            } else {
-                songs.push(song);
-            }
-
-            localStorage.setItem('melodex_songs', JSON.stringify(songs));
-            renderSongs();
-            closeAddSongModal();
-        }
-
-        function editCurrentSong() {
-            if (!currentSong) return;
-            editSong(currentSong.id);
-            closeSong();
-        }
-
-        function editSong(id) {
-            const song = songs.find(s => s.id === id);
-            if (!song) return;
-
-            editingId = id;
-            document.getElementById('songModalTitle').textContent = 'Edit Song';
-            document.getElementById('songTitle').value = song.title;
-            document.getElementById('songArtist').value = song.artist || '';
-            document.getElementById('songKey').value = song.key || '';
-            document.getElementById('songLyrics').value = song.lyrics;
-            selectMethod('manual');
-            document.getElementById('addSongModal').classList.add('active');
-        }
-
-        function deleteCurrentSong() {
-            if (!currentSong) return;
-            if (confirm(`Delete "${currentSong.title}"?`)) {
-                songs = songs.filter(s => s.id !== currentSong.id);
-                localStorage.setItem('melodex_songs', JSON.stringify(songs));
-                renderSongs();
-                closeSong();
-            }
-        }
-
-        function deleteSong(id, event) {
-            event.stopPropagation();
-            const song = songs.find(s => s.id === id);
-            if (confirm(`Delete "${song.title}"?`)) {
-                songs = songs.filter(s => s.id !== id);
-                localStorage.setItem('melodex_songs', JSON.stringify(songs));
-                renderSongs();
-            }
-        }
-
-        function openSong(id, contextSongs = null, contextTitle = 'Songs') {
-            currentSong = songs.find(s => s.id === id);
-            if (!currentSong) return;
-
-            currentTranspose = 0;
-            showChords = true;
-            currentPage = 0;
-            menuHidden = false;
-            controlsExpanded = true;
-
-            // Set navigation context
-            if (contextSongs) {
-                navigationContext = contextSongs.map(s => s.id);
-            } else {
-                // Use currently displayed song list
-                navigationContext = songs.map(s => s.id);
-            }
-            currentSongIndex = navigationContext.indexOf(id);
-
-            // Update prev/next button states
-            updateNavigationButtons();
-
-            // Build side panel
-            buildSidePanel(contextSongs || songs, contextTitle);
-
-            // Hide old nav-tabs element and container, show header and song controls
-            const oldNavTabs = document.getElementById('navTabs');
-            if (oldNavTabs) {
-                oldNavTabs.style.display = 'none';
-            }
-            document.querySelector('.container').style.display = 'none';
-            document.querySelector('.header').style.display = 'flex';
-            const controlBar = document.getElementById('songControlsBar');
-            controlBar.classList.remove('hidden');
-            controlBar.style.display = 'flex';
-            
-            document.getElementById('songView').classList.add('active');
-            document.getElementById('toggleChordsMenuBtn').textContent = 'Hide Chords';
-            updateTransposeDisplay();
-            
-            if (settings.displayMode === 'pages') {
-                createPages();
-            }
-            
-            renderSongContent();
-            updateKeyDisplay();
-        }
-
-        function closeSong() {
-            document.getElementById('songView').classList.remove('active');
-            document.querySelector('.header').style.display = 'flex';
-            const controlBar = document.getElementById('songControlsBar');
-            controlBar.classList.remove('hidden');
-            controlBar.style.display = 'flex';
-            document.querySelector('.container').style.display = 'block';
-            menuHidden = false;
-            controlsExpanded = true;
-            stopAutoScroll();
-            currentSong = null;
-        }
-
-        function renderSongContent() {
-            if (!currentSong) return;
-
-            const content = document.getElementById('songContent');
-            const lines = currentSong.lyrics.split('\n');
-            
-            if (settings.displayMode === 'pages') {
-                content.classList.add('paged');
-                renderPages();
-            } else {
-                content.classList.remove('paged');
-                
-                // Start with title and artist
-                let html = `<div class="song-title-display">${currentSong.title}</div>`;
-                html += `<div class="song-artist-display">${currentSong.artist || 'Unknown Artist'}</div>`;
-                
-                // Add lyrics
-                for (let line of lines) {
-                    if (line.trim().match(/^[A-G][#b]?/)) {
-                        if (showChords) {
-                            html += `<div class="chord-line">${transposeLine(line)}</div>`;
-                        }
-                    } else {
-                        html += `<div class="lyric-line">${line || '&nbsp;'}</div>`;
-                    }
-                }
-                content.innerHTML = html;
-                document.getElementById('pageControls').classList.remove('active');
-            }
-        }
-
-        function createPages() {
-            if (!currentSong) return;
-            
-            const lines = currentSong.lyrics.split('\n');
-            const linesPerPage = 25; // Adjust based on screen size
-            pages = [];
-            
-            for (let i = 0; i < lines.length; i += linesPerPage) {
-                pages.push(lines.slice(i, i + linesPerPage));
-            }
-            
-            totalPages = pages.length;
-        }
-
-        function renderPages() {
-            const content = document.getElementById('songContent');
-            const pageLines = pages[currentPage] || [];
-            
-            let html = '';
-            
-            // Add title and artist on the first page only
-            if (currentPage === 0) {
-                html += `<div class="song-title-display">${currentSong.title}</div>`;
-                html += `<div class="song-artist-display">${currentSong.artist || 'Unknown Artist'}</div>`;
-            }
-            
-            for (let line of pageLines) {
-                if (line.trim().match(/^[A-G][#b]?/)) {
-                    if (showChords) {
-                        html += `<div class="chord-line">${transposeLine(line)}</div>`;
-                    }
-                } else {
-                    html += `<div class="lyric-line">${line || '&nbsp;'}</div>`;
-                }
-            }
-            
-            content.innerHTML = html;
-            document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${totalPages}`;
-            document.getElementById('pageControls').classList.add('active');
-        }
-
-        function nextPage() {
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                renderPages();
-            }
-        }
-
-        function previousPage() {
-            if (currentPage > 0) {
-                currentPage--;
-                renderPages();
-            }
-        }
-
-        function renderSongs() {
-            const list = document.getElementById('songList');
-            const empty = document.getElementById('emptyState');
-            
-            // Reset artist view when re-rendering
-            currentArtistView = null;
-            const backBtn = document.getElementById('artistBackBtn');
-            if (backBtn) {
-                backBtn.remove();
-            }
-            
-            if (songs.length === 0) {
-                list.innerHTML = '';
-                empty.style.display = 'block';
-                return;
-            }
-            
-            empty.style.display = 'none';
-            sortSongs();
-        }
-
-        function sortSongs() {
-            const sortOrder = document.getElementById('sortOrder').value;
-            const list = document.getElementById('songList');
-            
-            // If viewing artist A-Z, show artist list
-            if (sortOrder === 'alpha-artist' && !currentArtistView) {
-                renderArtistList();
-                return;
-            }
-            
-            let sorted = [...songs];
-            
-            // If we're viewing a specific artist, filter to that artist
-            if (currentArtistView) {
-                sorted = sorted.filter(s => (s.artist || 'Unknown Artist') === currentArtistView);
-                sorted.sort((a, b) => a.title.localeCompare(b.title));
-            } else if (sortOrder === 'alpha-title') {
-                sorted.sort((a, b) => a.title.localeCompare(b.title));
-            } else {
-                sorted.sort((a, b) => b.dateAdded - a.dateAdded);
-            }
-            
-            const showDate = sortOrder === 'recent';
-            
-            list.innerHTML = sorted.map(song => {
-                const dateStr = showDate ? formatDate(song.dateAdded) : '';
-                return `
-                    <div class="song-item" onclick="openSong(${song.id})">
-                        <div class="song-info">
-                            <div class="song-title">${song.title}</div>
-                            <div class="song-artist">${song.artist || 'Unknown Artist'}</div>
-                            ${showDate ? `<div class="song-date">${dateStr}</div>` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderArtistList() {
-            const list = document.getElementById('songList');
-            
-            // Get unique artists with song counts
-            const artistMap = new Map();
-            songs.forEach(song => {
-                const artist = song.artist || 'Unknown Artist';
-                if (!artistMap.has(artist)) {
-                    artistMap.set(artist, []);
-                }
-                artistMap.get(artist).push(song);
-            });
-            
-            // Sort artists alphabetically
-            const artists = Array.from(artistMap.keys()).sort((a, b) => {
-                if (a === 'Unknown Artist') return 1;
-                if (b === 'Unknown Artist') return -1;
-                return a.localeCompare(b);
-            });
-            
-            list.innerHTML = artists.map(artist => {
-                const count = artistMap.get(artist).length;
-                return `
-                    <div class="song-item" onclick="viewArtistSongs('${artist.replace(/'/g, "\\'")}')">
-                        <div class="song-info">
-                            <div class="song-title">${artist}</div>
-                            <div class="song-artist">${count} ${count === 1 ? 'song' : 'songs'}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function viewArtistSongs(artist) {
-            currentArtistView = artist;
-            
-            // Update the controls to show back button
-            const controls = document.querySelector('#songsTab .controls');
-            const backBtn = document.getElementById('artistBackBtn');
-            
-            if (!backBtn) {
-                const btn = document.createElement('button');
-                btn.id = 'artistBackBtn';
-                btn.className = 'btn-secondary';
-                btn.textContent = '← All Artists';
-                btn.onclick = backToArtistList;
-                controls.insertBefore(btn, controls.firstChild);
-            }
-            
-            sortSongs();
-        }
-
-        function backToArtistList() {
-            currentArtistView = null;
-            const backBtn = document.getElementById('artistBackBtn');
-            if (backBtn) {
-                backBtn.remove();
-            }
-            sortSongs();
-        }
-
-        function formatDate(timestamp) {
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays === 0) {
-                return 'today';
-            } else if (diffDays === 1) {
-                return 'yesterday';
-            } else if (diffDays < 7) {
-                return `${diffDays} days ago`;
-            } else if (diffDays < 30) {
-                const weeks = Math.floor(diffDays / 7);
-                return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
-            } else if (diffDays < 365) {
-                const months = Math.floor(diffDays / 30);
-                return `${months} ${months === 1 ? 'month' : 'months'} ago`;
-            } else {
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-            }
-        }
-
-        function filterSongs() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const items = document.querySelectorAll('.song-item');
-            
-            items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(query) ? 'block' : 'none';
-            });
-        }
-
-        // Chord Transposition
-        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        const flats = {
-            'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb'
+      function showSong(song) {
+        lastListState = {
+          view: currentView,
+          selectedSetlist: selectedSetlist,
+          currentArtistFilter: currentArtistFilter,
+          currentSort: currentSort
         };
 
-        function transposeChord(chord, steps) {
-            const match = chord.match(/^([A-G][#b]?)(.*)/);
-            if (!match) return chord;
-            
-            let [, note, suffix] = match;
-            
-            if (note.includes('b')) {
-                const idx = Object.values(flats).indexOf(note);
-                if (idx !== -1) note = Object.keys(flats)[idx];
-            }
-            
-            let index = notes.indexOf(note);
-            if (index === -1) return chord;
-            
-            index = (index + steps + 12) % 12;
-            return notes[index] + suffix;
+        let allSongs = songs;
+        if (currentView === 'sets' && selectedSetlist) {
+          const set = setlists.find(s => s.id === selectedSetlist);
+          if (set) allSongs = set.songIds.map(id => songs.find(s => s.id === id)).filter(Boolean);
+        } else if (currentArtistFilter) {
+          allSongs = songs.filter(s => s.artist === currentArtistFilter);
         }
 
-        function transposeLine(line) {
-            return line.split(/\s+/).map(chord => {
-                if (chord.match(/^[A-G][#b]?/)) {
-                    return transposeChord(chord, currentTranspose);
-                }
-                return chord;
-            }).join(' ');
+        const searchVal = document.querySelector('#songs-search')?.value?.toLowerCase() || '';
+        if (searchVal) allSongs = allSongs.filter(s => s.title.toLowerCase().includes(searchVal));
+
+        currentSongList = allSongs;
+        currentSongIndex = currentSongList.findIndex(s => s.id === song.id);
+
+        document.getElementById('noSong').classList.add('hidden');
+        document.getElementById('songView').classList.remove('hidden');
+        document.getElementById('songTitle').textContent = song.title;
+        document.getElementById('songArtist').textContent = '— ' + song.artist;
+        document.getElementById('songLyrics').textContent = song.lyricsWithChords || '';
+
+        document.getElementById('lyricsContainer').scrollTop = 0;
+        if (isScrolling) toggleAutoScroll();
+
+        closePanel();
+      }
+
+      function getSearchPlaceholder() {
+        if (currentArtistFilter) return `Search songs by ${currentArtistFilter}…`;
+        if (currentSort === 'artist') return 'Search artists...';
+        return 'Search songs...';
+      }
+
+      function renderPanelContent() {
+        const content = document.getElementById('panelContent');
+        if (!content) return;
+        content.innerHTML = '';
+
+        if (currentView === 'songs') {
+          const searchDiv = document.createElement('div');
+          searchDiv.className = 'mb-2 relative';
+          const searchId = 'songs-search';
+          searchDiv.innerHTML = `
+            <label for="${searchId}" class="sr-only">Search</label>
+            <input id="${searchId}" type="search" placeholder="${getSearchPlaceholder()}" class="w-full px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400">
+          `;
+          content.appendChild(searchDiv);
+          const searchInput = searchDiv.querySelector('input');
         }
 
-        function transposeUp() {
-            currentTranspose++;
-            renderSongContent();
-            updateKeyDisplay();
-            updateTransposeDisplay();
+        const toolbar = document.getElementById('editToolbar');
+        toolbar.innerHTML = '';
+        if (editMode && selectedIds.size > 0) {
+          toolbar.innerHTML = `
+            ${currentView === 'songs' ? '<button class="px-4 py-1.5 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700" onclick="showAddToSetModal()">+Set</button>' : ''}
+            <button class="p-1.5 hover:bg-gray-200 rounded-full" onclick="showDeleteConfirm()" title="Delete selected">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/>
+              </svg>
+            </button>
+          `;
         }
 
-        function transposeDown() {
-            currentTranspose--;
-            renderSongContent();
-            updateKeyDisplay();
-            updateTransposeDisplay();
-        }
+        if (currentView === 'songs') {
+          if (!currentArtistFilter) {
+            const sortDiv = document.createElement('div');
+            sortDiv.className = 'mb-2 flex items-center gap-2 text-sm';
+            sortDiv.innerHTML = `
+              <label>Sort:</label>
+              <select id="sortSelect" class="p-1.5 border rounded text-sm">
+                <option value="date">Date added</option>
+                <option value="title">Title</option>
+                <option value="artist">Artist</option>
+              </select>
+            `;
+            const sel = sortDiv.querySelector('#sortSelect');
+            sel.value = currentSort;
+            sel.onchange = () => {
+              currentSort = sel.value;
+              currentArtistFilter = null;
+              renderPanelContent();
+            };
+            content.appendChild(sortDiv);
+          }
 
-        function toggleSongControlBar() {
-            const controlBar = document.getElementById('songControlsBar');
-            const songContent = document.getElementById('songContent');
-            controlsExpanded = !controlsExpanded;
-            
-            if (controlsExpanded) {
-                controlBar.classList.remove('hidden');
-                songContent.style.paddingTop = '';
+          const addBtn = document.createElement('button');
+          addBtn.textContent = '+';
+          addBtn.className = 'absolute top-3 right-3 px-2.5 py-1 bg-indigo-600 text-white rounded-full text-sm';
+          addBtn.onclick = () => document.getElementById('addSongModal').classList.remove('hidden');
+          content.appendChild(addBtn);
+
+          const list = document.createElement('div');
+          list.id = 'songList';
+          list.className = 'flex-1 overflow-y-auto divide-y divide-gray-200';
+          content.appendChild(list);
+
+          const searchInput = document.querySelector('#songs-search');
+          if (currentSort === 'artist' && !currentArtistFilter) {
+            renderArtistList(list, searchInput ? searchInput.value : '');
+          } else {
+            renderSongsList(searchInput ? searchInput.value : '', list);
+          }
+
+          if (searchInput) {
+            searchInput.oninput = () => renderPanelContent();
+          }
+        } else if (currentView === 'sets') {
+          if (selectedSetlist) {
+            const backBtn = document.createElement('button');
+            backBtn.textContent = '← Back to Sets';
+            backBtn.className = 'mb-3 text-sm text-indigo-600 hover:underline';
+            backBtn.onclick = () => {
+              selectedSetlist = null;
+              renderPanelContent();
+            };
+            content.appendChild(backBtn);
+
+            const setNameHeader = document.createElement('h3');
+            setNameHeader.className = 'text-xl font-bold mb-4 px-2';
+            const set = setlists.find(s => s.id === selectedSetlist);
+            setNameHeader.textContent = set ? set.name : 'Set';
+            content.appendChild(setNameHeader);
+
+            const songList = document.createElement('div');
+            songList.className = 'flex-1 overflow-y-auto divide-y divide-gray-200';
+            content.appendChild(songList);
+
+            if (!set || set.songIds.length === 0) {
+              songList.innerHTML = '<p class="text-center py-10 text-gray-500">No songs in this set yet.</p>';
             } else {
-                controlBar.classList.add('hidden');
-                songContent.style.paddingTop = '1.5rem';
+              set.songIds.forEach(songId => {
+                const song = songs.find(s => s.id === songId);
+                if (song) addSongRow(song, songList);
+              });
             }
-        }
+          } else {
+            const list = document.createElement('div');
+            list.id = 'setList';
+            list.className = 'flex-1 overflow-y-auto divide-y divide-gray-200 text-sm';
+            content.appendChild(list);
 
-        function closePanelOnLyricsClick(event) {
-            const panel = document.getElementById('sidePanel');
-            if (panel.classList.contains('active')) {
-                // Only close if clicking on lyrics, not on child elements that might be interactive
-                if (event.target === event.currentTarget || event.target.classList.contains('lyric-line') || event.target.classList.contains('chord-line')) {
-                    toggleSidePanel();
-                }
-            }
-        }
+            if (setlists.length === 0) {
+              list.innerHTML = '<p class="text-center py-10 text-gray-500">No sets yet. Click + to create one.</p>';
+            } else {
+              setlists.forEach(s => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center px-4 py-2 hover:bg-indigo-50 border-b text-sm relative';
+                row.draggable = editMode;
+                row.dataset.id = s.id;
 
-        function openTuner() {
-            // Close song view and switch to tuner tab
-            closeSong();
-            switchTab('tuner');
-        }
-
-        function resetTranspose() {
-            currentTranspose = 0;
-            renderSongContent();
-            updateTransposeDisplay();
-        }
-
-        function updateTransposeDisplay() {
-            const display = document.getElementById('transposeDisplay');
-            if (display) {
-                if (currentTranspose === 0) {
-                    display.textContent = '0';
-                } else if (currentTranspose > 0) {
-                    display.textContent = '+' + currentTranspose;
+                if (renamingSetId === s.id) {
+                  row.innerHTML = `
+                    <input type="text" value="${s.name}" class="flex-1 p-1 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-indigo-400" autofocus onblur="finishRenameSet('${s.id}', this.value)" onkeydown="if(event.key==='Enter') finishRenameSet('${s.id}', this.value); if(event.key==='Escape') finishRenameSet('${s.id}', null);">
+                    ${editMode ? `
+                      <button class="ml-2 p-1 hover:bg-gray-200 rounded-full drag-handle" title="Drag to reorder">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="8" y1="6" x2="16" y2="6"></line>
+                          <line x1="8" y1="12" x2="16" y2="12"></line>
+                          <line x1="8" y1="18" x2="16" y2="18"></line>
+                        </svg>
+                      </button>
+                    ` : ''}
+                  `;
                 } else {
-                    display.textContent = currentTranspose.toString();
+                  row.innerHTML = `
+                    ${editMode ? `<input type="checkbox" class="mr-3 set-checkbox" data-id="${s.id}" ${selectedIds.has(s.id) ? 'checked' : ''}>` : ''}
+                    <div class="flex-1 cursor-pointer" ${editMode ? `onclick="startRenameSet('${s.id}')"` : `onclick="selectedSetlist = '${s.id}'; renderPanelContent();"`}>
+                      <div class="font-medium truncate">${s.name}</div>
+                    </div>
+                    ${editMode ? `
+                      <button class="ml-2 p-1 hover:bg-gray-200 rounded-full drag-handle" title="Drag to reorder">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="8" y1="6" x2="16" y2="6"></line>
+                          <line x1="8" y1="12" x2="16" y2="12"></line>
+                          <line x1="8" y1="18" x2="16" y2="18"></line>
+                        </svg>
+                      </button>
+                    ` : ''}
+                  `;
                 }
+
+                list.appendChild(row);
+              });
             }
-        }
 
-        function showEditMenu() {
-            // Populate current values
-            if (currentSong && currentSong.key) {
-                document.getElementById('editSongKey').value = currentSong.key;
+            const addSet = document.createElement('button');
+            addSet.textContent = '+';
+            addSet.className = 'absolute top-3 right-3 px-2.5 py-1 bg-indigo-600 text-white rounded-full text-sm';
+            addSet.onclick = () => document.getElementById('addSetModal').classList.remove('hidden');
+            content.appendChild(addSet);
+
+            if (editMode) {
+              list.querySelectorAll('.set-checkbox').forEach(chk => {
+                chk.onchange = e => {
+                  if (e.target.checked) selectedIds.add(e.target.dataset.id);
+                  else selectedIds.delete(e.target.dataset.id);
+                  renderPanelContent();
+                };
+              });
+
+              list.addEventListener('dragstart', e => {
+                const item = e.target.closest('[draggable]');
+                if (item) item.classList.add('dragging');
+              });
+              list.addEventListener('dragend', e => {
+                const item = e.target.closest('[draggable]');
+                if (item) item.classList.remove('dragging');
+              });
+              list.addEventListener('dragover', e => {
+                e.preventDefault();
+                const dragging = list.querySelector('.dragging');
+                const after = [...list.children].find(el => el !== dragging && e.clientY < el.getBoundingClientRect().top + el.getBoundingClientRect().height / 2);
+                if (after) list.insertBefore(dragging, after);
+                else list.appendChild(dragging);
+              });
+              list.addEventListener('drop', () => {
+                const newOrder = [...list.children].map(el => el.dataset.id).filter(Boolean);
+                setlists = newOrder.map(id => setlists.find(s => s.id === id)).filter(Boolean);
+                saveData();
+                renderPanelContent();
+              });
             }
-            document.getElementById('toggleChordsMenuBtn').textContent = showChords ? 'Hide Chords' : 'Show Chords';
-            
-            document.getElementById('editMenuModal').classList.add('active');
+          }
+        }
+      }
+
+      function startRenameSet(id) {
+        renamingSetId = id;
+        renderPanelContent();
+      }
+
+      function finishRenameSet(id, newName) {
+        if (newName !== null && newName.trim()) {
+          const set = setlists.find(s => s.id === id);
+          if (set) {
+            set.name = newName.trim();
+            saveData();
+          }
+        }
+        renamingSetId = null;
+        renderPanelContent();
+      }
+
+      function renderArtistList(container, filter = '') {
+        let artists = [...new Set(songs.map(s => s.artist))];
+        if (filter.trim()) {
+          const lower = filter.toLowerCase();
+          artists = artists.filter(a => a.toLowerCase().includes(lower));
+        }
+        artists.sort((a, b) => a.localeCompare(b));
+
+        container.innerHTML = '';
+
+        artists.forEach(artist => {
+          const count = songs.filter(s => s.artist === artist).length;
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between px-4 py-3 hover:bg-indigo-50 border-b cursor-pointer';
+          row.innerHTML = `
+            <div class="font-medium">${artist}</div>
+            <div class="text-sm text-gray-500">${count} song${count !== 1 ? 's' : ''}</div>
+          `;
+          row.onclick = () => {
+            currentArtistFilter = artist;
+            renderPanelContent();
+          };
+          container.appendChild(row);
+        });
+      }
+
+      function renderSongsList(filter = '', container) {
+        container.innerHTML = '';
+
+        let filtered = songs;
+        if (currentArtistFilter) {
+          filtered = filtered.filter(s => s.artist === currentArtistFilter);
         }
 
-        function closeEditMenu() {
-            document.getElementById('editMenuModal').classList.remove('active');
+        if (filter.trim()) {
+          const lower = filter.toLowerCase();
+          filtered = filtered.filter(s => s.title.toLowerCase().includes(lower));
         }
 
-        function toggleChordsFromMenu() {
-            toggleChords();
-            document.getElementById('toggleChordsMenuBtn').textContent = showChords ? 'Hide Chords' : 'Show Chords';
+        if (currentArtistFilter) {
+          if (!container.parentElement.querySelector('.artist-header')) {
+            const header = document.createElement('div');
+            header.className = 'artist-header text-2xl font-bold mb-4 px-4';
+            header.textContent = currentArtistFilter;
+            container.parentElement.insertBefore(header, container);
+          }
+
+          if (!container.parentElement.querySelector('.back-btn')) {
+            const back = document.createElement('button');
+            back.textContent = '← Back to Artists';
+            back.className = 'back-btn mb-3 ml-4 text-sm text-indigo-600 hover:underline';
+            back.onclick = () => {
+              currentArtistFilter = null;
+              renderPanelContent();
+            };
+            container.parentElement.insertBefore(back, container);
+          }
         }
 
-        function changeTextSizeFromMenu() {
-            const size = document.getElementById('textSizeMenu').value;
-            document.getElementById('songContent').style.fontSize = size + 'rem';
-        }
+        const useAlphabet = currentSort === 'title' && !currentArtistFilter;
 
-        function changeTextColor() {
-            const color = document.getElementById('textColorMenu').value;
-            const content = document.getElementById('songContent');
-            
-            if (color === 'default') {
-                content.style.color = '';
-                // Reset chord color too
-                document.querySelectorAll('.chord-line').forEach(el => {
-                    el.style.color = '';
-                });
-            } else {
-                content.style.color = color;
+        if (useAlphabet) {
+          let lastLetter = '';
+          filtered.forEach(song => {
+            const firstLetter = song.title.charAt(0).toUpperCase();
+            if (firstLetter !== lastLetter) {
+              const header = document.createElement('div');
+              header.className = 'letter-header';
+              header.textContent = firstLetter;
+              container.appendChild(header);
+              lastLetter = firstLetter;
             }
+            addSongRow(song, container);
+          });
+        } else {
+          filtered.forEach(song => addSongRow(song, container));
+        }
+      }
+
+      function addSongRow(song, container) {
+        const row = document.createElement('div');
+        row.className = 'flex items-center px-4 py-2 hover:bg-indigo-50 border-b text-sm relative';
+
+        let dateLabel = 'No date';
+        if (song.dateAdded) {
+          const date = new Date(song.dateAdded);
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          const weekAgo = new Date(today);
+          weekAgo.setDate(weekAgo.getDate() - 7);
+
+          if (date.toDateString() === today.toDateString()) dateLabel = 'Today';
+          else if (date.toDateString() === yesterday.toDateString()) dateLabel = 'Yesterday';
+          else if (date >= weekAgo && date < today) dateLabel = 'This week';
+          else dateLabel = date.toLocaleDateString('default', { month: 'short', year: 'numeric' });
         }
 
-        function changeFontStyle() {
-            const font = document.getElementById('fontStyleMenu').value;
-            document.getElementById('songContent').style.fontFamily = font;
+        const extra = `<div class="text-xs text-gray-500 ml-auto">${dateLabel}</div>`;
+
+        row.innerHTML = `
+          ${editMode ? `<input type="checkbox" class="mr-3" ${selectedIds.has(song.id)?'checked':''}>` : ''}
+          <div class="flex-1 min-w-0">
+            <div class="font-medium truncate">${song.title}</div>
+            ${currentArtistFilter ? '' : `<div class="text-xs text-gray-600 truncate">${song.artist}</div>`}
+          </div>
+          ${extra}
+          ${editMode ? `
+            <button class="ml-2 p-1 hover:bg-gray-200 rounded-full edit-song-btn" data-id="${song.id}" title="Edit song">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+          ` : ''}
+        `;
+
+        if (editMode) {
+          row.querySelector('input').onchange = e => {
+            if (e.target.checked) selectedIds.add(song.id);
+            else selectedIds.delete(song.id);
+            renderPanelContent();
+          };
+          row.querySelector('.edit-song-btn')?.addEventListener('click', e => {
+            e.stopPropagation();
+            editSong(song.id);
+          });
+        } else {
+          row.onclick = () => showSong(song);
         }
 
-        function editCurrentSongContent() {
-            if (!currentSong) return;
-            closeEditMenu();
-            editSong(currentSong.id);
-            closeSong();
-        }
+        container.appendChild(row);
+      }
 
-        function updateSongKey() {
-            const newKey = document.getElementById('editSongKey').value.trim();
-            if (currentSong && newKey) {
-                currentSong.key = newKey;
-                // Update in the songs array
-                const index = songs.findIndex(s => s.id === currentSong.id);
-                if (index !== -1) {
-                    songs[index].key = newKey;
-                    localStorage.setItem('melodex_songs', JSON.stringify(songs));
-                }
-                updateKeyDisplay();
-            }
-        }
+      function editSong(id) {
+        const song = songs.find(s => s.id === id);
+        if (!song) return;
+        currentEditSongId = id;
+        document.getElementById('editTitle').value = song.title;
+        document.getElementById('editArtist').value = song.artist;
+        document.getElementById('editLyrics').value = song.lyricsWithChords || '';
+        document.getElementById('editSongModal').classList.remove('hidden');
+      }
 
-        // Auto-update key when typing in the edit menu
-        document.addEventListener('DOMContentLoaded', () => {
-            const keyInput = document.getElementById('editSongKey');
-            if (keyInput) {
-                keyInput.addEventListener('blur', updateSongKey);
-            }
+      function saveEditedSong() {
+        const title = document.getElementById('editTitle').value.trim();
+        const artist = document.getElementById('editArtist').value.trim();
+        const lyrics = document.getElementById('editLyrics').value.trim();
+        if (title && artist && lyrics && currentEditSongId) {
+          const song = songs.find(s => s.id === currentEditSongId);
+          if (song) {
+            song.title = title;
+            song.artist = artist;
+            song.lyricsWithChords = lyrics;
+            saveData();
+            renderPanelContent();
+            document.getElementById('editSongModal').classList.add('hidden');
+          }
+        }
+      }
+
+      function showDeleteConfirm() {
+        document.getElementById('confirmDeleteModal').classList.remove('hidden');
+      }
+
+      function confirmDelete() {
+        document.getElementById('confirmDeleteModal').classList.add('hidden');
+        if (currentView === 'songs') {
+          songs = songs.filter(s => !selectedIds.has(s.id));
+          setlists.forEach(s => s.songIds = s.songIds.filter(id => !selectedIds.has(id)));
+        } else if (currentView === 'sets') {
+          setlists = setlists.filter(s => !selectedIds.has(s.id));
+        }
+        saveData();
+        selectedIds.clear();
+        editMode = false;
+        renderPanelContent();
+      }
+
+      function showAddToSetModal() {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+          <div class="bg-white p-6 rounded-lg w-11/12 max-w-sm max-h-[80vh] overflow-y-auto">
+            <h3 class="text-lg font-bold mb-4">Add to Set</h3>
+            ${setlists.length === 0 ? '<p class="text-center text-gray-500 mb-4">No sets yet. Create one first.</p>' : ''}
+            ${setlists.map(s => `
+              <button class="w-full text-left px-4 py-3 hover:bg-indigo-50 border-b last:border-b-0" onclick="addSelectedToSet('${s.id}'); this.closest('.fixed').remove()">
+                ${s.name} (${s.songIds.length} songs)
+              </button>
+            `).join('')}
+            <button class="mt-4 w-full py-2 bg-gray-300 rounded text-sm" onclick="this.closest('.fixed').remove()">Cancel</button>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      function addSelectedToSet(setId) {
+        const set = setlists.find(s => s.id === setId);
+        if (!set) return;
+
+        selectedIds.forEach(id => {
+          if (!set.songIds.includes(id)) {
+            set.songIds.push(id);
+          }
         });
 
-        function toggleSidePanel() {
-            const panel = document.getElementById('sidePanel');
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const sidePanelBtn = document.getElementById('sidePanelBtn');
-            
-            panel.classList.toggle('active');
-            
-            // Hide/show floating buttons when panel opens/closes
-            if (panel.classList.contains('active')) {
-                hamburgerBtn.style.opacity = '0';
-                hamburgerBtn.style.pointerEvents = 'none';
-                sidePanelBtn.style.opacity = '0';
-                sidePanelBtn.style.pointerEvents = 'none';
-            } else {
-                hamburgerBtn.style.opacity = '0.7';
-                hamburgerBtn.style.pointerEvents = 'auto';
-                sidePanelBtn.style.opacity = '0.7';
-                sidePanelBtn.style.pointerEvents = 'auto';
-            }
+        saveData();
+        renderPanelContent();
+      }
+
+      function saveNewSong() {
+        const title = document.getElementById('addTitle').value.trim();
+        const artist = document.getElementById('addArtist').value.trim();
+        const lyrics = document.getElementById('addLyrics').value.trim();
+        if (title && artist && lyrics) {
+          songs.push({
+            id: Date.now().toString(),
+            title, artist, lyricsWithChords: lyrics,
+            dateAdded: new Date().toISOString()
+          });
+          saveData();
+          renderPanelContent();
+          document.getElementById('addSongModal').classList.add('hidden');
         }
+      }
 
-        function showPanelView(view) {
-            currentPanelView = view;
-            currentPanelArtist = null;
-            
-            // Update tab active states
-            document.querySelectorAll('.side-panel-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Render the appropriate view
-            renderPanelContent();
+      function saveNewSet() {
+        const name = document.getElementById('addSetName').value.trim();
+        if (name) {
+          setlists.push({ id: Date.now().toString(), name, songIds: [] });
+          saveData();
+          renderPanelContent();
+          document.getElementById('addSetModal').classList.add('hidden');
         }
+      }
 
-        function renderPanelContent() {
-            const content = document.getElementById('sidePanelContent');
-            
-            if (currentPanelView === 'songs') {
-                renderPanelSongs();
-            } else if (currentPanelView === 'artists') {
-                if (currentPanelArtist) {
-                    renderPanelArtistSongs(currentPanelArtist);
-                } else {
-                    renderPanelArtists();
-                }
-            } else if (currentPanelView === 'setlists') {
-                renderPanelSetlists();
-            }
-        }
-
-        function renderPanelSongs() {
-            const content = document.getElementById('sidePanelContent');
-            const sortedSongs = [...songs].sort((a, b) => a.title.localeCompare(b.title));
-            
-            content.innerHTML = sortedSongs.map(song => `
-                <div class="side-panel-item ${song.id === currentSong?.id ? 'active' : ''}" onclick="switchToSongFromPanel(${song.id}, 'All Songs')">
-                    <div class="side-panel-item-title">${song.title}</div>
-                    <div class="side-panel-item-artist">${song.artist || 'Unknown Artist'}</div>
-                </div>
-            `).join('');
-        }
-
-        function renderPanelArtists() {
-            const content = document.getElementById('sidePanelContent');
-            
-            // Get unique artists with song counts
-            const artistMap = new Map();
-            songs.forEach(song => {
-                const artist = song.artist || 'Unknown Artist';
-                if (!artistMap.has(artist)) {
-                    artistMap.set(artist, []);
-                }
-                artistMap.get(artist).push(song);
-            });
-            
-            // Sort artists alphabetically
-            const artists = Array.from(artistMap.keys()).sort((a, b) => {
-                if (a === 'Unknown Artist') return 1;
-                if (b === 'Unknown Artist') return -1;
-                return a.localeCompare(b);
-            });
-            
-            content.innerHTML = artists.map(artist => {
-                const count = artistMap.get(artist).length;
-                return `
-                    <div class="side-panel-item" onclick="viewPanelArtist('${artist.replace(/'/g, "\\'")}')">
-                        <div class="side-panel-item-title">${artist}</div>
-                        <div class="side-panel-item-artist">${count} ${count === 1 ? 'song' : 'songs'}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function viewPanelArtist(artist) {
-            currentPanelArtist = artist;
-            renderPanelArtistSongs(artist);
-        }
-
-        function renderPanelArtistSongs(artist) {
-            const content = document.getElementById('sidePanelContent');
-            const artistSongs = songs.filter(s => (s.artist || 'Unknown Artist') === artist)
-                                     .sort((a, b) => a.title.localeCompare(b.title));
-            
-            const backButton = `
-                <div class="side-panel-back" onclick="currentPanelArtist = null; renderPanelArtists();">
-                    ← Back to Artists
-                </div>
-            `;
-            
-            const songsList = artistSongs.map(song => `
-                <div class="side-panel-item ${song.id === currentSong?.id ? 'active' : ''}" onclick="switchToSongFromPanel(${song.id}, '${artist.replace(/'/g, "\\'")}')">
-                    <div class="side-panel-item-title">${song.title}</div>
-                    <div class="side-panel-item-artist">${song.artist || 'Unknown Artist'}</div>
-                </div>
-            `).join('');
-            
-            content.innerHTML = backButton + songsList;
-        }
-
-        function renderPanelSetlists() {
-            const content = document.getElementById('sidePanelContent');
-            
-            if (setlists.length === 0) {
-                content.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-secondary);">No setlists yet</div>';
-                return;
-            }
-            
-            content.innerHTML = setlists.map(setlist => {
-                const setlistSongs = setlist.songs.map(id => songs.find(s => s.id === id)).filter(Boolean);
-                return `
-                    <div class="side-panel-item" onclick="expandPanelSetlist(${setlist.id})">
-                        <div class="side-panel-item-title">${setlist.name}</div>
-                        <div class="side-panel-item-artist">${setlistSongs.length} ${setlistSongs.length === 1 ? 'song' : 'songs'}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function expandPanelSetlist(setlistId) {
-            const content = document.getElementById('sidePanelContent');
-            const setlist = setlists.find(s => s.id === setlistId);
-            if (!setlist) return;
-            
-            const setlistSongs = setlist.songs.map(id => songs.find(s => s.id === id)).filter(Boolean);
-            
-            const backButton = `
-                <div class="side-panel-back" onclick="renderPanelSetlists();">
-                    ← Back to Setlists
-                </div>
-            `;
-            
-            const songsList = setlistSongs.map((song, idx) => `
-                <div class="side-panel-item ${song.id === currentSong?.id ? 'active' : ''}" onclick="switchToSongFromPanel(${song.id}, '${setlist.name.replace(/'/g, "\\'")}', ${setlistId})">
-                    <div class="side-panel-item-title">${idx + 1}. ${song.title}</div>
-                    <div class="side-panel-item-artist">${song.artist || 'Unknown Artist'}</div>
-                </div>
-            `).join('');
-            
-            content.innerHTML = backButton + songsList;
-        }
-
-        function switchToSongFromPanel(songId, contextTitle, setlistId = null) {
-            if (songId === currentSong?.id) return;
-            
-            let contextSongs;
-            
-            if (setlistId) {
-                const setlist = setlists.find(s => s.id === setlistId);
-                contextSongs = setlist.songs.map(id => songs.find(s => s.id === id)).filter(Boolean);
-            } else if (currentPanelArtist) {
-                contextSongs = songs.filter(s => (s.artist || 'Unknown Artist') === currentPanelArtist)
-                                   .sort((a, b) => a.title.localeCompare(b.title));
-            } else {
-                contextSongs = [...songs].sort((a, b) => a.title.localeCompare(b.title));
-            }
-            
-            openSong(songId, contextSongs, contextTitle);
-            renderPanelContent(); // Refresh to update active state
-        }
-
-        function buildSidePanel(songList, title) {
-            document.getElementById('sidePanelTitle').textContent = title;
-            renderPanelContent();
-        }
-
-        function switchToSong(id) {
-            if (id === currentSong.id) return;
-            
-            const contextSongs = navigationContext.map(songId => songs.find(s => s.id === songId)).filter(Boolean);
-            const contextTitle = document.getElementById('sidePanelTitle').textContent;
-            
-            openSong(id, contextSongs, contextTitle);
-            
-            // Scroll to top when switching songs
-            document.getElementById('songContent').scrollTop = 0;
-            window.scrollTo(0, 0);
-        }
-
-        function previousSongInList() {
-            if (currentSongIndex <= 0) return;
-            
-            const prevId = navigationContext[currentSongIndex - 1];
-            switchToSong(prevId);
-        }
-
-        function nextSongInList() {
-            if (currentSongIndex >= navigationContext.length - 1) return;
-            
-            const nextId = navigationContext[currentSongIndex + 1];
-            switchToSong(nextId);
-        }
-
-        function updateNavigationButtons() {
-            const prevBtn = document.getElementById('prevSongBtn');
-            const nextBtn = document.getElementById('nextSongBtn');
-            
-            if (currentSongIndex <= 0) {
-                prevBtn.style.opacity = '0.3';
-                prevBtn.style.cursor = 'not-allowed';
-            } else {
-                prevBtn.style.opacity = '0.8';
-                prevBtn.style.cursor = 'pointer';
-            }
-            
-            if (currentSongIndex >= navigationContext.length - 1) {
-                nextBtn.style.opacity = '0.3';
-                nextBtn.style.cursor = 'not-allowed';
-            } else {
-                nextBtn.style.opacity = '0.8';
-                nextBtn.style.cursor = 'pointer';
-            }
-        }
-
-        function updateKeyDisplay() {
-            if (currentSong && currentSong.key) {
-                const newKey = transposeChord(currentSong.key, currentTranspose);
-                // Key display removed from UI, but function kept for compatibility
-            }
-        }
-
-        function toggleChords() {
-            showChords = !showChords;
-            const menuBtn = document.getElementById('toggleChordsMenuBtn');
-            if (menuBtn) {
-                menuBtn.textContent = showChords ? 'Hide Chords' : 'Show Chords';
-            }
-            renderSongContent();
-        }
-
-        // Auto Scroll
-        function toggleAutoScroll() {
-            if (autoScrollInterval) {
-                stopAutoScroll();
-            } else {
-                startAutoScroll();
-            }
-        }
-
-        function startAutoScroll() {
-            const btn = document.getElementById('autoScrollBtn');
-            const indicator = document.getElementById('scrollIndicator');
-            
-            btn.textContent = '⏸';
-            btn.title = 'Stop Scroll';
-            indicator.classList.add('active');
-            
-            autoScrollInterval = setInterval(() => {
-                window.scrollBy(0, 1);
-            }, 50);
-        }
-
-        function stopAutoScroll() {
-            if (!autoScrollInterval) return;
-            
-            const btn = document.getElementById('autoScrollBtn');
-            const indicator = document.getElementById('scrollIndicator');
-            
-            clearInterval(autoScrollInterval);
-            autoScrollInterval = null;
-            
-            btn.textContent = '⏯';
-            btn.title = 'Auto Scroll';
-            indicator.classList.remove('active');
-        }
-
-        // Setlists
-        function showCreateSetlistModal() {
-            const list = document.getElementById('songCheckboxList');
-            list.innerHTML = songs.map(song => `
-                <div class="checkbox-group">
-                    <input type="checkbox" id="song_${song.id}" value="${song.id}">
-                    <label for="song_${song.id}">${song.title} - ${song.artist || 'Unknown'}</label>
-                </div>
-            `).join('');
-            
-            document.getElementById('createSetlistModal').classList.add('active');
-        }
-
-        function closeCreateSetlistModal() {
-            document.getElementById('createSetlistModal').classList.remove('active');
-            document.getElementById('setlistName').value = '';
-        }
-
-        function saveSetlist() {
-            const name = document.getElementById('setlistName').value;
-            if (!name) {
-                alert('Please enter a setlist name');
-                return;
-            }
-
-            const selectedSongs = [];
-            songs.forEach(song => {
-                const checkbox = document.getElementById(`song_${song.id}`);
-                if (checkbox && checkbox.checked) {
-                    selectedSongs.push(song.id);
-                }
-            });
-
-            if (selectedSongs.length === 0) {
-                alert('Please select at least one song');
-                return;
-            }
-
-            const setlist = {
-                id: Date.now(),
-                name: name,
-                songs: selectedSongs,
-                dateCreated: Date.now()
-            };
-
-            setlists.push(setlist);
-            localStorage.setItem('melodex_setlists', JSON.stringify(setlists));
-            renderSetlists();
-            closeCreateSetlistModal();
-        }
-
-        function renderSetlists() {
-            const list = document.getElementById('setlistList');
-            const empty = document.getElementById('emptySetlistState');
-            
-            if (setlists.length === 0) {
-                list.innerHTML = '';
-                empty.style.display = 'block';
-                return;
-            }
-            
-            empty.style.display = 'none';
-            list.innerHTML = setlists.map(setlist => {
-                const setlistSongs = setlist.songs.map(id => songs.find(s => s.id === id)).filter(Boolean);
-                const setlistSongsJson = JSON.stringify(setlistSongs.map(s => s.id));
-                return `
-                    <div class="setlist-item">
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 0.5rem;">${setlist.name}</div>
-                            <div style="color: var(--text-secondary); font-size: 0.9rem;">${setlistSongs.length} songs</div>
-                        </div>
-                        <button class="btn-secondary" onclick="deleteSetlist(${setlist.id})">Delete</button>
-                    </div>
-                    <div class="setlist-songs">
-                        ${setlistSongs.map((song, idx) => `
-                            <div class="setlist-song">
-                                <span>${idx + 1}. ${song.title}</span>
-                                <button class="btn-secondary" onclick="openSongFromSetlist(${song.id}, ${setlist.id})" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">View</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function openSongFromSetlist(songId, setlistId) {
-            const setlist = setlists.find(s => s.id === setlistId);
-            if (!setlist) return;
-            
-            const setlistSongs = setlist.songs.map(id => songs.find(s => s.id === id)).filter(Boolean);
-            openSong(songId, setlistSongs, setlist.name);
-        }
-
-        function deleteSetlist(id) {
-            if (confirm('Delete this setlist?')) {
-                setlists = setlists.filter(s => s.id !== id);
-                localStorage.setItem('melodex_setlists', JSON.stringify(setlists));
-                renderSetlists();
-            }
-        }
-
-        // Settings
-        function changeTheme() {
-            const theme = document.getElementById('themeSelect').value;
-            settings.theme = theme;
-            localStorage.setItem('melodex_settings', JSON.stringify(settings));
-            applySettings();
-        }
-
-        function changeDisplayMode() {
-            const mode = document.getElementById('displayMode').value;
-            settings.displayMode = mode;
-            localStorage.setItem('melodex_settings', JSON.stringify(settings));
-            
-            if (currentSong) {
-                if (mode === 'pages') {
-                    createPages();
-                }
-                renderSongContent();
-            }
-        }
-
-        function togglePedal() {
-            const enabled = document.getElementById('pedalToggle').checked;
-            settings.pedalEnabled = enabled;
-            localStorage.setItem('melodex_settings', JSON.stringify(settings));
-            
-            document.getElementById('pedalSettings').style.display = enabled ? 'flex' : 'none';
-            
-            if (enabled) {
-                setupPedalListeners();
-            } else {
-                removePedalListeners();
-            }
-        }
-
-        function connectPedal() {
-            if (!navigator.bluetooth) {
-                alert('Bluetooth is not supported in this browser');
-                return;
-            }
-
-            navigator.bluetooth.requestDevice({
-                filters: [{ services: ['battery_service'] }],
-                optionalServices: ['generic_access']
-            })
-            .then(device => {
-                pedalConnected = true;
-                document.getElementById('pedalStatus').textContent = 'Connected: ' + device.name;
-                alert('Pedal connected! Use the pedal buttons to turn pages.');
-            })
-            .catch(error => {
-                console.error('Bluetooth connection error:', error);
-                alert('Failed to connect pedal. Make sure Bluetooth is enabled.');
-            });
-        }
-
-        function setupPedalListeners() {
-            // Listen for keyboard events that pedals typically send
-            document.addEventListener('keydown', handlePedalPress);
-        }
-
-        function removePedalListeners() {
-            document.removeEventListener('keydown', handlePedalPress);
-        }
-
-        function handlePedalPress(e) {
-            if (!settings.pedalEnabled || !currentSong) return;
-            
-            // Common pedal key codes: Page Up, Page Down, Arrow keys
-            if (e.key === 'PageDown' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                if (settings.displayMode === 'pages') {
-                    nextPage();
-                } else {
-                    window.scrollBy(0, window.innerHeight * 0.8);
-                }
-            } else if (e.key === 'PageUp' || e.key === 'ArrowLeft') {
-                e.preventDefault();
-                if (settings.displayMode === 'pages') {
-                    previousPage();
-                } else {
-                    window.scrollBy(0, -window.innerHeight * 0.8);
-                }
-            }
-        }
-
-        function applySettings() {
-            document.documentElement.setAttribute('data-theme', settings.theme);
-            document.getElementById('themeSelect').value = settings.theme;
-            document.getElementById('displayMode').value = settings.displayMode;
-            document.getElementById('pedalToggle').checked = settings.pedalEnabled;
-            document.getElementById('pedalSettings').style.display = settings.pedalEnabled ? 'flex' : 'none';
-            
-            if (settings.pedalEnabled) {
-                setupPedalListeners();
-            }
-        }
-
-        function exportData() {
-            const data = {
-                songs: songs,
-                setlists: setlists,
-                exportDate: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `melodex-backup-${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function importData() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'application/json';
-            input.onchange = e => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = event => {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        if (confirm('This will replace all current songs and setlists. Continue?')) {
-                            songs = data.songs || [];
-                            setlists = data.setlists || [];
-                            localStorage.setItem('melodex_songs', JSON.stringify(songs));
-                            localStorage.setItem('melodex_setlists', JSON.stringify(setlists));
-                            renderSongs();
-                            renderSetlists();
-                            alert('Data imported successfully!');
-                        }
-                    } catch (err) {
-                        alert('Invalid file format');
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
-
-        // Chromatic Tuner
-        function toggleTuner() {
-            if (tunerActive) {
-                stopTuner();
-            } else {
-                startTuner();
-            }
-        }
-
-        async function startTuner() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                microphone = audioContext.createMediaStreamSource(stream);
-                
-                analyser.fftSize = 4096;
-                microphone.connect(analyser);
-                
-                tunerActive = true;
-                document.getElementById('tunerBtn').textContent = 'Stop Tuner';
-                document.getElementById('tunerBtn').classList.add('btn-primary');
-                document.getElementById('tunerBtn').classList.remove('btn-secondary');
-                
-                detectPitch();
-            } catch (err) {
-                console.error('Microphone access error:', err);
-                alert('Could not access microphone. Please grant permission.');
-            }
-        }
-
-        function stopTuner() {
-            if (audioContext) {
-                audioContext.close();
-                audioContext = null;
-            }
-            
-            tunerActive = false;
-            document.getElementById('tunerBtn').textContent = 'Start Tuner';
-            document.getElementById('tunerBtn').classList.remove('btn-primary');
-            document.getElementById('tunerBtn').classList.add('btn-secondary');
-            document.getElementById('tunerNote').textContent = '--';
-            document.getElementById('tunerFrequency').textContent = '-- Hz';
-            document.getElementById('tunerStatus').textContent = 'Play a note';
-            document.getElementById('tunerStatus').className = 'tuner-status';
-        }
-
-        function detectPitch() {
-            if (!tunerActive) return;
-            
-            const bufferLength = analyser.fftSize;
-            const buffer = new Float32Array(bufferLength);
-            analyser.getFloatTimeDomainData(buffer);
-            
-            const frequency = autoCorrelate(buffer, audioContext.sampleRate);
-            
-            if (frequency > 0) {
-                const note = frequencyToNote(frequency);
-                const cents = getCents(frequency, note.frequency);
-                
-                document.getElementById('tunerNote').textContent = note.note;
-                document.getElementById('tunerFrequency').textContent = frequency.toFixed(1) + ' Hz';
-                
-                // Update needle position
-                const needle = document.getElementById('tunerNeedle');
-                const offset = (cents / 50) * 40; // Scale cents to percentage
-                needle.style.left = `calc(50% + ${offset}%)`;
-                
-                // Update status
-                const statusEl = document.getElementById('tunerStatus');
-                if (Math.abs(cents) < 5) {
-                    statusEl.textContent = 'In Tune ✓';
-                    statusEl.className = 'tuner-status in-tune';
-                } else if (cents < 0) {
-                    statusEl.textContent = `Flat (${Math.abs(cents).toFixed(0)}¢)`;
-                    statusEl.className = 'tuner-status flat';
-                } else {
-                    statusEl.textContent = `Sharp (+${cents.toFixed(0)}¢)`;
-                    statusEl.className = 'tuner-status sharp';
-                }
-            }
-            
-            requestAnimationFrame(detectPitch);
-        }
-
-        function autoCorrelate(buffer, sampleRate) {
-            let size = buffer.length;
-            let maxSamples = Math.floor(size / 2);
-            let bestOffset = -1;
-            let bestCorrelation = 0;
-            let rms = 0;
-            
-            for (let i = 0; i < size; i++) {
-                let val = buffer[i];
-                rms += val * val;
-            }
-            rms = Math.sqrt(rms / size);
-            
-            if (rms < 0.01) return -1;
-            
-            let lastCorrelation = 1;
-            for (let offset = 0; offset < maxSamples; offset++) {
-                let correlation = 0;
-                for (let i = 0; i < maxSamples; i++) {
-                    correlation += Math.abs(buffer[i] - buffer[i + offset]);
-                }
-                correlation = 1 - (correlation / maxSamples);
-                
-                if (correlation > 0.9 && correlation > lastCorrelation) {
-                    let foundGoodCorrelation = false;
-                    if (correlation > bestCorrelation) {
-                        bestCorrelation = correlation;
-                        bestOffset = offset;
-                        foundGoodCorrelation = true;
-                    }
-                    if (foundGoodCorrelation) {
-                        let shift = (correlation - lastCorrelation);
-                        return sampleRate / (bestOffset + 8 * shift);
-                    }
-                }
-                lastCorrelation = correlation;
-            }
-            
-            if (bestCorrelation > 0.01) {
-                return sampleRate / bestOffset;
-            }
-            return -1;
-        }
-
-        const noteFrequencies = [
-            { note: 'C', frequency: 16.35 },
-            { note: 'C#', frequency: 17.32 },
-            { note: 'D', frequency: 18.35 },
-            { note: 'D#', frequency: 19.45 },
-            { note: 'E', frequency: 20.60 },
-            { note: 'F', frequency: 21.83 },
-            { note: 'F#', frequency: 23.12 },
-            { note: 'G', frequency: 24.50 },
-            { note: 'G#', frequency: 25.96 },
-            { note: 'A', frequency: 27.50 },
-            { note: 'A#', frequency: 29.14 },
-            { note: 'B', frequency: 30.87 }
+      if (songs.length === 0) {
+        songs = [
+          { id: '1', title: 'Wonderwall', artist: 'Oasis', lyricsWithChords: '[Em] [G] [D] [A7sus4]\nToday is gonna be the day...', dateAdded: new Date().toISOString() },
+          { id: '2', title: 'Horse With No Name', artist: 'America', lyricsWithChords: '[Em] [D6/9] ...\nOn the first part...', dateAdded: new Date().toISOString() },
+          { id: '3', title: 'Hallelujah', artist: 'Leonard Cohen', lyricsWithChords: '[C] [Am] ...\nI\'ve heard there was...', dateAdded: new Date().toISOString() }
         ];
+        saveData();
+      }
 
-        function frequencyToNote(frequency) {
-            let closestNote = noteFrequencies[0];
-            let closestDistance = Math.abs(Math.log2(frequency / closestNote.frequency));
-            
-            for (let octave = 0; octave < 8; octave++) {
-                for (let note of noteFrequencies) {
-                    const noteFreq = note.frequency * Math.pow(2, octave);
-                    const distance = Math.abs(Math.log2(frequency / noteFreq));
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        closestNote = { note: note.note, frequency: noteFreq };
-                    }
-                }
-            }
-            
-            return closestNote;
-        }
-
-        function getCents(frequency, targetFrequency) {
-            return 1200 * Math.log2(frequency / targetFrequency);
-        }
+      renderPanelContent();
     </script>
-
-</body></html>
+</body>
+</html>
