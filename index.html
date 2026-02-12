@@ -6,7 +6,7 @@
   <title>Song Caddie</title>
   
   <!-- Apple Touch Icon for iOS home screen -->
-  <link rel="apple-touch-icon" href="icon_180x180.png">
+  <link rel="apple-touch-icon" href="logo-text-small.png">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   
   <!-- Mobile Web App Settings -->
@@ -14,7 +14,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com">
+</script>
   <style>
     /* Lock screen dimensions */
     html, body {
@@ -104,7 +105,133 @@
       pointer-events: none;
       z-index: 20;
     }
-  </style>
+    
+
+  
+      /* Bottom sheet (My Songs panel) */
+
+      #sidePanel.bottom-sheet {
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        width: 75vw;
+        max-width: 680px;
+        height: 75vh;
+        background: #fff;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.25);
+        border-radius: 18px;
+        transform: translate(-50%, 100%);
+        transition: transform 300ms ease;
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        touch-action: none; /* we manage drag */
+      }
+
+      #sidePanel.bottom-sheet.open {
+        transform: translate(-50%, 0);
+      }
+
+      /* The small black grabber line that stays visible */
+      #grabberBar {
+        position: fixed;
+        left: 50%;
+        bottom: 10px;
+        transform: translateX(-50%);
+        width: 54px;
+        height: 6px;
+        border-radius: 999px;
+        background: #000;
+        opacity: 0.9;
+        z-index: 30;
+        cursor: ns-resize;
+      }
+
+      /* Larger invisible hit area around the grabber for easy touch */
+      #grabberHit {
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 140px;
+        height: 44px;
+        z-index: 29;
+        background: transparent;
+        touch-action: none;
+      }
+
+
+      /* Internal grabber (attached to the panel) */
+      #grabberInPanel {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 54px;
+        height: 6px;
+        border-radius: 999px;
+        background: #000;
+        opacity: 0.9;
+        z-index: 31;
+      }
+      #grabberInPanelHit {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 180px;
+        height: 44px;
+        z-index: 30;
+        background: transparent;
+        touch-action: none;
+        cursor: ns-resize;
+      }
+
+      /* When open, use the internal grabber; hide the external one */
+      #sidePanel.bottom-sheet.open ~ #grabberHit,
+      #sidePanel.bottom-sheet.open ~ #grabberBar {
+        display: none;
+      }
+
+      /* Give content a bit of top room so it doesn't sit under the grabber */
+      #sidePanel.bottom-sheet.open .p-3 {
+        padding-top: 2.25rem;
+      }
+
+
+
+      /* Grabber positioning states */
+      #grabberBar, #grabberHit { pointer-events: auto; }
+      #grabberBar.attached { bottom: auto; }
+      #grabberHit.attached { bottom: auto; }
+
+
+      /* Hide panel footer controls when closed? (keep them inside; panel is hidden anyway) */
+      #sidePanel.bottom-sheet:not(.open) .sheet-only-open {
+        display: none !important;
+      }
+
+      /* Prevent underlying content scroll while dragging on mobile */
+      body.sheet-open {
+        overflow: hidden;
+        touch-action: none;
+      }
+
+
+    
+      /* Panel footer buttons (light, aligned) */
+      #sidePanel .panel-footer button {
+        padding: 8px 12px;
+        border-radius: 10px;
+        background: #f3f4f6; /* gray-100 */
+        color: #111827;      /* gray-900 */
+        font-weight: 600;
+        font-size: 14px;
+      }
+      #sidePanel .panel-footer button:hover { background: #e5e7eb; } /* gray-200 */
+
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen antialiased">
 
@@ -116,34 +243,50 @@
   <!-- Main -->
   <div id="main" class="hidden relative min-h-screen">
 
-    <!-- Menu button with "My library" icon -->
-    <button id="menuBtn" class="fixed top-4 right-4 z-30 hover:opacity-80 transition hidden">
-      <svg width="80" height="80" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-        <!-- Icon symbol -->
-        <g fill="#1f2937">
-          <!-- Left vertical bar -->
-          <rect x="360" y="300" width="90" height="320" rx="45"/>
-          <!-- Middle vertical bar -->
-          <rect x="480" y="240" width="90" height="380" rx="45"/>
-          <!-- Right angled bar -->
-          <rect x="610" y="340" width="90" height="280" rx="45"
-                transform="rotate(-25 655 480)"/>
-        </g>
-        <!-- Text -->
-        <text x="512" y="820"
-              text-anchor="middle"
-              font-family="Arial, Helvetica, sans-serif"
-              font-size="120"
-              fill="#1f2937"
-              letter-spacing="2">
-          My library
-        </text>
-      </svg>
+    <!-- Menu button with "All Songs" icon -->
+    <button id="menuBtn" class="fixed top-4 right-4 z-30 hover:opacity-80 transition hidden" >
+      <svg width="80" height="80" class="block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 170" aria-label="All Songs">
+
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Thinner top two lines (closer to box) -->
+  <rect x="58" y="36" width="24" height="3" rx="1.5" fill="#111"/>
+  <rect x="48" y="41" width="44" height="3" rx="1.5" fill="#111"/>
+
+  <!-- Rounded square background -->
+  <rect x="30" y="46" width="80" height="80" rx="26"
+        fill="#111"
+        filter="url(#softShadow)"/>
+
+  <!-- Double note (centered + oval + slight CCW tilt) -->
+  <g fill="white"
+     transform="translate(38,56) scale(3.1,2.6) skewX(-8) rotate(-6 12 10)">
+    <path d="M18 2v12.5a2.9 2.9 0 1 1-1.4-2.6V6.1l-6.2 1.5v8.3a2.9 2.9 0 1 1-1.4-2.6V4.8L18 2z"/>
+    <path d="M16.4 5.4v-2l-6.6 1.6v2l6.6-1.6z"/>
+  </g>
+
+  <!-- Text -->
+  <text x="70" y="152"
+        text-anchor="middle"
+        font-size="24"
+        font-weight="600"
+        font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+        letter-spacing="0.5"
+        fill="#111">
+    All Songs
+  </text>
+
+</svg>
+
     </button>
 
     <main class="p-6 pt-16 max-w-3xl mx-auto relative"> <!-- reduced pt-20 → pt-16 so content starts higher -->
       <div id="noSong" class="text-center py-20 text-gray-500 relative">
-        <p class="text-xl mb-8">Select a song from <span class="text-indigo-600 hover:text-indigo-700 cursor-pointer underline" onclick="openPanel()">My library</span></p>
+        <p class="text-xl mb-8">Select a song from <span class="text-indigo-600 hover:text-indigo-700 cursor-pointer underline" onclick="openPanel()">All Songs</span></p>
         <img src="logo-splash.png" alt="Song Caddie Logo" class="mx-auto w-48 md:w-64 opacity-20"/>
       </div>
 
@@ -151,7 +294,6 @@
       <div id="songView" class="hidden bg-white rounded-xl shadow p-6 relative min-h-[calc(100vh-4rem)]">
         <div id="timeDisplay"></div>
         <div id="setlistLabel" class="hidden text-xs text-gray-400 mb-2"></div>
-
         <h1 id="songTitle" class="text-3xl font-bold mb-1"></h1>
         <p id="songArtist" class="text-gray-600 mb-4"></p>
 
@@ -161,24 +303,29 @@
 
         <!-- Controls overlay – fixed at bottom -->
         <div id="songNav">
-          <button id="prevSong" class="nav-arrow">←</button>
-          <button id="nextSong" class="nav-arrow">→</button>
-          <button id="autoScrollBtn">▶</button>
+          <button id="prevSong" class="nav-arrow" >←</button>
+          <button id="nextSong" class="nav-arrow" >→</button>
+          <button id="autoScrollBtn" >▶</button>
         </div>
       </div>
     </main>
 
     <!-- Side panel -->
-    <div id="sidePanel" class="fixed inset-y-0 right-0 w-[66%] max-w-sm bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-20 flex flex-col">
+    <div id="sidePanel" class="bottom-sheet">
+      <div id="grabberInPanel" aria-hidden="true"></div>
+      <div id="grabberInPanelHit" aria-label="Drag to close All Songs panel"></div>
       <div class="p-3 border-b flex items-center gap-3 flex-wrap shrink-0">
-        <img src="logo-text-small.png" alt="Song Caddie Text Logo" class="h-9 md:h-10"/>
-        <button class="view-tab px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-indigo-600 text-white" data-view="songs">Songs</button>
-        <button class="view-tab px-3 py-1 rounded-full text-xs md:text-sm font-medium bg-gray-200 text-gray-900 hover:bg-gray-300" data-view="sets">Setlists</button>
+        
+        <button class="view-tab flex items-center justify-center" data-view="songs" style="padding: 0; background: none; border: none;">
+          <img src="My_Songs_Logo_blue.svg" alt="All Songs" class="h-12 w-auto"/>
+        </button>
+        <button class="view-tab h-9 inline-flex items-center justify-center px-4 rounded-full text-sm font-medium bg-gray-200 text-gray-900 hover:bg-gray-300"" data-view="sets">Setlists</button>
+        <button id="addButton" class="h-7 w-7 inline-flex items-center justify-center rounded-full text-white text-lg font-medium" style="background-color: #213C57;">+</button>
       </div>
 
       <div id="panelContent" class="p-2 flex-1 overflow-hidden flex flex-col"></div>
 
-      <div class="p-2 border-t flex justify-between items-center shrink-0 bg-gray-50 relative">
+      <div class="panel-footer p-2 border-t flex items-center justify-between bg-gray-50 relative">
         <button id="editToggleBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Toggle edit mode">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -186,9 +333,9 @@
           </svg>
         </button>
 
-        <div id="editToolbar" class="flex gap-4"></div>
+        <div class="flex-1 flex justify-center"><div id="editToolbar" class="flex items-center gap-2"></div>
 
-        <button id="settingsBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Settings">
+        </div><button id="settingsBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Settings">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -219,7 +366,7 @@
           </select>
         </div>
         <div class="flex justify-end gap-2">
-          <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded">Close</button>
+          <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded" >Close</button>
         </div>
       </div>
     </div>
@@ -230,8 +377,8 @@
         <h3 class="text-lg font-bold mb-4">Delete selected item(s)?</h3>
         <p class="text-gray-600 mb-6">This cannot be undone.</p>
         <div class="flex justify-center gap-4">
-          <button onclick="document.getElementById('confirmDeleteModal').classList.add('hidden')" class="px-6 py-2 bg-gray-300 rounded">No</button>
-          <button onclick="confirmDelete()" class="px-6 py-2 bg-red-600 text-white rounded">Yes</button>
+          <button onclick="document.getElementById('confirmDeleteModal').classList.add('hidden')" class="px-6 py-2 bg-gray-300 rounded" >No</button>
+          <button onclick="confirmDelete()" class="px-6 py-2 bg-red-600 text-white rounded" >Yes</button>
         </div>
       </div>
     </div>
@@ -244,8 +391,8 @@
         <input id="addArtist" type="text" placeholder="Artist" class="w-full p-2 border rounded mb-2 text-sm">
         <textarea id="addLyrics" placeholder="Lyrics with chords..." class="w-full p-2 border rounded mb-3 h-28 text-sm"></textarea>
         <div class="flex justify-end gap-2">
-          <button onclick="document.getElementById('addSongModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm">Cancel</button>
-          <button onclick="saveNewSong()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm">Save</button>
+          <button onclick="document.getElementById('addSongModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm" >Cancel</button>
+          <button onclick="saveNewSong()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm" >Save</button>
         </div>
       </div>
     </div>
@@ -258,8 +405,8 @@
         <input id="editArtist" type="text" placeholder="Artist" class="w-full p-2 border rounded mb-2 text-sm">
         <textarea id="editLyrics" placeholder="Lyrics with chords..." class="w-full p-2 border rounded mb-3 h-28 text-sm"></textarea>
         <div class="flex justify-end gap-2">
-          <button onclick="document.getElementById('editSongModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm">Cancel</button>
-          <button onclick="saveEditedSong()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm">Save</button>
+          <button onclick="document.getElementById('editSongModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm" >Cancel</button>
+          <button onclick="saveEditedSong()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm" >Save</button>
         </div>
       </div>
     </div>
@@ -270,8 +417,8 @@
         <h2 class="text-lg font-bold mb-3">New Set</h2>
         <input id="addSetName" type="text" placeholder="Set Name" class="w-full p-2 border rounded mb-3 text-sm">
         <div class="flex justify-end gap-2">
-          <button onclick="document.getElementById('addSetModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm">Cancel</button>
-          <button onclick="saveNewSet()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm">Create</button>
+          <button onclick="document.getElementById('addSetModal').classList.add('hidden')" class="px-3 py-1.5 bg-gray-300 rounded text-sm" >Cancel</button>
+          <button onclick="saveNewSet()" class="px-3 py-1.5 bg-indigo-600 text-white rounded text-sm" >Create</button>
         </div>
       </div>
     </div>
@@ -288,11 +435,25 @@
       let renamingSetId = null;
       let lastListState = null;
       let currentSong = null;
+      let currentEditSongId = null;
 
       let currentSongIndex = -1;
       let currentSongList = [];
       let autoScrollInterval = null;
       let isScrolling = false;
+
+
+      // --- Chord rendering (highlights [Em] style chords safely) ---
+      function escapeHtml(s) {
+        return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      }
+
+      function renderChordMarkup(text) {
+        const safe = escapeHtml(text || '');
+        // [Em] [G] => <span class="chord">[Em]</span>
+        return safe.replace(/\[([^\]\n]{1,12})\]/g, (_, chord) => `<span class="chord">[${chord}]</span>`);
+      }
+
 
       function saveData() {
         localStorage.setItem('songCaddieSongs', JSON.stringify(songs));
@@ -300,14 +461,19 @@
       }
 
       function openPanel() {
-        document.getElementById('sidePanel').classList.remove('translate-x-full');
+        const panel = document.getElementById('sidePanel');
+        panel.classList.add('open');
+        document.body.classList.add('sheet-open');
         document.getElementById('backdrop').classList.remove('hidden');
         document.getElementById('menuBtn').classList.add('hidden');
         renderPanelContent();
       }
 
       function closePanel() {
-        document.getElementById('sidePanel').classList.add('translate-x-full');
+        const panel = document.getElementById('sidePanel');
+        panel.classList.remove('open');
+        panel.style.transform = '';
+        document.body.classList.remove('sheet-open');
         document.getElementById('backdrop').classList.add('hidden');
         document.getElementById('menuBtn').classList.remove('hidden');
         editMode = false;
@@ -366,12 +532,18 @@
 
           // Update tab styling
           document.querySelectorAll('.view-tab').forEach(t => {
-            if (t.dataset.view === currentView) {
-              t.classList.add('bg-indigo-600', 'text-white');
-              t.classList.remove('bg-gray-200', 'text-gray-900');
+            if (t.dataset.view === 'songs') {
+              // Handle SVG button - use opacity
+              t.style.opacity = t.dataset.view === currentView ? '1' : '0.5';
             } else {
-              t.classList.remove('bg-indigo-600', 'text-white');
-              t.classList.add('bg-gray-200', 'text-gray-900');
+              // Handle regular button
+              if (t.dataset.view === currentView) {
+                t.classList.add('bg-indigo-600', 'text-white');
+                t.classList.remove('bg-gray-200', 'text-gray-900');
+              } else {
+                t.classList.remove('bg-indigo-600', 'text-white');
+                t.classList.add('bg-gray-200', 'text-gray-900');
+              }
             }
           });
 
@@ -390,14 +562,32 @@
           renamingSetId = null;
           lastListState = null;
           document.querySelectorAll('.view-tab').forEach(t => {
-            t.classList.remove('bg-indigo-600', 'text-white');
-            t.classList.add('bg-gray-200', 'text-gray-900');
+            // Handle SVG button (Songs) - adjust opacity
+            if (t.dataset.view === 'songs') {
+              t.style.opacity = t === tab ? '1' : '0.5';
+            } else {
+              // Handle regular button (Setlists) - use background colors
+              t.classList.remove('bg-indigo-600', 'text-white');
+              t.classList.add('bg-gray-200', 'text-gray-900');
+            }
           });
-          tab.classList.add('bg-indigo-600', 'text-white');
-          tab.classList.remove('bg-gray-200', 'text-gray-900');
+          // Highlight selected tab
+          if (tab.dataset.view !== 'songs') {
+            tab.classList.add('bg-indigo-600', 'text-white');
+            tab.classList.remove('bg-gray-200', 'text-gray-900');
+          }
           renderPanelContent();
         };
       });
+
+      // Add button handler - opens song or set modal based on current view
+      document.getElementById('addButton').onclick = () => {
+        if (currentView === 'songs') {
+          document.getElementById('addSongModal').classList.remove('hidden');
+        } else if (currentView === 'sets') {
+          document.getElementById('addSetModal').classList.remove('hidden');
+        }
+      };
 
       document.getElementById('editToggleBtn').onclick = () => {
         editMode = !editMode;
@@ -516,7 +706,7 @@
         document.getElementById('songView').classList.remove('hidden');
         document.getElementById('songTitle').textContent = song.title;
         document.getElementById('songArtist').textContent = '— ' + song.artist;
-        document.getElementById('songLyrics').textContent = song.lyricsWithChords || '';
+        document.getElementById('songLyrics').innerHTML = renderChordMarkup(song.lyricsWithChords || '');
         
         // Display setlist name if viewing from a setlist
         const setlistLabel = document.getElementById('setlistLabel');
@@ -562,7 +752,7 @@
         toolbar.innerHTML = '';
         if (editMode && selectedIds.size > 0) {
           toolbar.innerHTML = `
-            ${currentView === 'songs' ? '<button class="px-4 py-1.5 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700" onclick="showAddToSetModal()">+Set</button>' : ''}
+            ${currentView === 'songs' ? '<button class="h-9 px-3 inline-flex items-center justify-center rounded-full bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700" onclick="showAddToSetModal()">+ Set</button>' : ''}
             <button class="p-1.5 hover:bg-gray-200 rounded-full" onclick="showDeleteConfirm()" title="Delete selected">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
                 <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/>
@@ -593,12 +783,6 @@
             content.appendChild(sortDiv);
           }
 
-          const addBtn = document.createElement('button');
-          addBtn.textContent = '+';
-          addBtn.className = 'absolute top-3 right-3 px-2.5 py-1 bg-indigo-600 text-white rounded-full text-sm';
-          addBtn.onclick = () => document.getElementById('addSongModal').classList.remove('hidden');
-          content.appendChild(addBtn);
-
           const list = document.createElement('div');
           list.id = 'songList';
           list.className = 'flex-1 overflow-y-auto divide-y divide-gray-200';
@@ -625,7 +809,7 @@
         } else if (currentView === 'sets') {
           if (selectedSetlist) {
             const headerDiv = document.createElement('div');
-            headerDiv.className = 'mb-3 flex items-center justify-between';
+            headerDiv.className = 'flex items-center justify-between mb-3';
             
             const backBtn = document.createElement('button');
             backBtn.textContent = '← Back to Sets';
@@ -636,12 +820,7 @@
             };
             headerDiv.appendChild(backBtn);
             
-            const addSongsBtn = document.createElement('button');
-            addSongsBtn.innerHTML = '+';
-            addSongsBtn.className = 'px-2.5 py-1 bg-indigo-600 text-white rounded-full text-lg hover:bg-indigo-700';
-            addSongsBtn.title = 'Add songs to setlist';
-            addSongsBtn.onclick = () => showAddSongsToSetModal();
-            headerDiv.appendChild(addSongsBtn);
+            
             
             content.appendChild(headerDiv);
 
@@ -664,8 +843,9 @@
                 if (song) addSongRow(song, songList);
               });
               
-              // Add drag-and-drop functionality when in edit mode
-              if (editMode) {
+              // Add drag-and-drop functionality when in edit mode (bind once)
+              if (editMode && !songList.dataset.dndBound) {
+                songList.dataset.dndBound = '1';
                 songList.addEventListener('dragstart', e => {
                   const item = e.target.closest('[draggable]');
                   if (item) item.classList.add('dragging');
@@ -743,12 +923,6 @@
               });
             }
 
-            const addSet = document.createElement('button');
-            addSet.textContent = '+';
-            addSet.className = 'absolute top-3 right-3 px-2.5 py-1 bg-indigo-600 text-white rounded-full text-sm';
-            addSet.onclick = () => document.getElementById('addSetModal').classList.remove('hidden');
-            content.appendChild(addSet);
-
             if (editMode) {
               list.querySelectorAll('.set-checkbox').forEach(chk => {
                 chk.onchange = e => {
@@ -758,7 +932,13 @@
                 };
               });
 
-              list.addEventListener('dragstart', e => {
+              // Add drag-and-drop functionality when in edit mode (bind once)
+
+              if (editMode && !list.dataset.dndBound) {
+
+                list.dataset.dndBound = '1';
+
+                list.addEventListener('dragstart', e => {
                 const item = e.target.closest('[draggable]');
                 if (item) item.classList.add('dragging');
               });
@@ -779,6 +959,8 @@
                 saveData();
                 renderPanelContent();
               });
+
+              }
             }
           }
         }
@@ -1077,7 +1259,7 @@
             </div>
             <div class="p-4 border-t flex gap-2">
               <button class="flex-1 py-2 bg-gray-300 rounded text-sm hover:bg-gray-400" onclick="this.closest('.fixed').remove()">Cancel</button>
-              <button id="confirmAddSongs" class="flex-1 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">Add Songs</button>
+              <button id="confirmAddSongs" class="flex-1 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700" >Add Songs</button>
             </div>
           </div>
         `;
@@ -1211,6 +1393,168 @@
       });
 
       renderPanelContent();
+
+      // Safety: ensure menu button is visible after initial render
+      document.getElementById('menuBtn')?.classList.remove('hidden');
+
     </script>
-</body>
+
+    <!-- Bottom sheet grabber (always visible) -->
+    <div id="grabberHit" aria-label="Open All Songs panel"></div>
+    <div id="grabberBar" aria-hidden="true"></div>
+  
+    <script>
+      // Bottom sheet interactions:
+      // - Desktop: click to open/close (no drag)
+      // - Touch devices (iPhone/iPad): drag to open/close + tap to toggle
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const panel = document.getElementById('sidePanel');
+        const hitClosed = document.getElementById('grabberHit');
+        const barClosed = document.getElementById('grabberBar');
+        const hitOpen = document.getElementById('grabberInPanelHit');
+        const addSongFooterBtn = document.getElementById('addSongFooterBtn');
+
+        if (!panel || !hitClosed || !barClosed || !hitOpen) return;
+
+        // Footer add song button
+        addSongFooterBtn?.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (typeof showAddSongModal === 'function') showAddSongModal();
+        });
+
+        const backdrop = document.getElementById('backdrop');
+        const menuBtn = document.getElementById('menuBtn');
+
+        const isTouchDevice =
+          window.matchMedia?.('(pointer: coarse)').matches ||
+          'ontouchstart' in window ||
+          (navigator.maxTouchPoints || 0) > 0;
+
+        let dragging = false;
+        let startY = 0;
+        let startPxDown = 0; // 0=open, panelHeight=closed
+        let panelHeight = 0;
+
+        function computeMetrics() {
+          panelHeight = panel.getBoundingClientRect().height;
+        }
+
+        function setTranslate(pxDown) {
+          panel.style.transform = `translate(-50%, ${pxDown}px)`;
+        }
+
+        function openSheet() {
+          panel.classList.add('open');
+          panel.classList.remove('dragging');
+          panel.style.transform = '';
+          document.body.classList.add('sheet-open');
+          backdrop?.classList.remove('hidden');
+          menuBtn?.classList.add('hidden');
+          if (typeof renderPanelContent === 'function') renderPanelContent();
+        }
+
+        function closeSheet() {
+          panel.classList.remove('open');
+          panel.classList.remove('dragging');
+          panel.style.transform = '';
+          document.body.classList.remove('sheet-open');
+          backdrop?.classList.add('hidden');
+          menuBtn?.classList.remove('hidden');
+
+          // reset edit state (matches your existing closePanel behavior)
+          try {
+            editMode = false;
+            selectedIds?.clear?.();
+            currentArtistFilter = null;
+            renamingSetId = null;
+          } catch {}
+          if (typeof renderPanelContent === 'function') renderPanelContent();
+        }
+
+        function toggle(e) {
+          e?.preventDefault?.();
+          if (dragging) return;
+          if (panel.classList.contains('open')) closeSheet();
+          else openSheet();
+        }
+
+        // Always allow click toggle (desktop + mobile)
+        hitClosed.addEventListener('click', toggle);
+        barClosed.addEventListener('click', toggle);
+
+        // If not touch, STOP here: desktop is click-only.
+        if (!isTouchDevice) return;
+
+        // Touch drag support
+        function getY(e) {
+          return (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+        }
+
+        function startDrag(y) {
+          dragging = true;
+          computeMetrics();
+          startY = y;
+          startPxDown = panel.classList.contains('open') ? 0 : panelHeight;
+          panel.classList.add('dragging');
+          setTranslate(startPxDown);
+        }
+
+        function moveDrag(y) {
+          if (!dragging) return;
+          const dy = y - startY;
+          let next = startPxDown + dy;
+          if (next < 0) next = 0;
+          if (next > panelHeight) next = panelHeight;
+          setTranslate(next);
+        }
+
+        function endDrag() {
+          if (!dragging) return;
+          dragging = false;
+          panel.classList.remove('dragging');
+          computeMetrics();
+
+          const mm = panel.style.transform.match(/,\s*([-\d.]+)px\)/);
+          const pxDown = mm ? parseFloat(mm[1]) : (panel.classList.contains('open') ? 0 : panelHeight);
+
+          if (pxDown > panelHeight * 0.55) closeSheet();
+          else openSheet();
+        }
+
+        function bindTouchDrag(el) {
+          el.addEventListener('touchstart', (e) => {
+            startDrag(getY(e));
+            e.preventDefault();
+          }, { passive: false });
+
+          el.addEventListener('touchmove', (e) => {
+            moveDrag(getY(e));
+            e.preventDefault();
+          }, { passive: false });
+
+          el.addEventListener('touchend', (e) => {
+            endDrag();
+            e.preventDefault();
+          });
+
+          el.addEventListener('touchcancel', (e) => {
+            endDrag();
+            e.preventDefault();
+          });
+        }
+
+        // Drag from:
+        // - bottom grabber (closed state)
+        // - top grabber hit area (open state)
+        [hitClosed, barClosed, hitOpen].forEach(bindTouchDrag);
+
+        window.addEventListener('resize', () => {
+          panel.style.transform = '';
+          panel.classList.remove('dragging');
+        });
+      });
+    </script>
+
+  </body>
 </html>
